@@ -1,0 +1,7 @@
+2024-06-18 22:09:34,538 - INFO - Server started on localhost:12346
+2024-06-18 22:09:49,709 - INFO - Connection accepted from ('127.0.0.1', 56383)
+2024-06-18 22:10:10,517 - DEBUG - Received request: {"action": "login", "employee_id": "E001", "password": "password123"}
+2024-06-18 22:10:10,533 - INFO - Login successful for employee ID: E001
+2024-06-18 22:10:10,533 - ERROR - Error in login: 'role'
+2024-06-18 22:10:10,533 - DEBUG - Sending response: {"status": "error", "message": "Server error"}
+2024-06-18 22:10:44,894 - INFO - Server started on localhost:12346
