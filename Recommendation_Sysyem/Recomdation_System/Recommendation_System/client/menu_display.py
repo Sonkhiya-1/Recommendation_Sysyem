@@ -1,5 +1,3 @@
-
-
 class MenuDisplay:
     def __init__(self, client):
         self.client = client
@@ -28,8 +26,9 @@ class MenuDisplay:
         print("2. Get Recommendations")
         print("3. Choose Recommendation")
         print("4. View Vote Counts")
-        print("5. Send Report")
-        print("6. Logout")
+        print("5. Send Feedback")
+        print("6. Send Report")
+        print("7. Logout")
 
     def _display_employee_menu(self):
         print("\nEmployee Actions:")

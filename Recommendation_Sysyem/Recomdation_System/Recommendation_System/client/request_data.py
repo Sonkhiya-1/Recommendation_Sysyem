@@ -1,5 +1,3 @@
-
-
 class RequestData:
     def __init__(self, client):
         self.client = client
@@ -41,9 +39,14 @@ class RequestData:
             menu_item_ids = [int(id.strip()) for id in menu_item_ids]
             return {"action": "choose_recommendations", "menu_item_ids": menu_item_ids, "user_id": self.client.user_id, "role": self.client.role}
         elif action == 4:
+            return {"action": "view_vote_counts"}
+        elif action == 5:
+            comment = input("Enter Feedback Comment: ")
+            item_id = int(input("Enter Menu Item ID for Feedback: "))
+            return {"action": "send_feedback", "user_id": self.client.user_id, "comment": comment, "item_id": item_id, "role": self.client.role}
+        elif action == 6:
             report = input("Enter Report: ")
             return {"action": "send_report", "report": report, "role": self.client.role}
-
 
     def _get_employee_request_data(self, action, user_id):
         if action == 1:
@@ -60,10 +63,6 @@ class RequestData:
         elif action == 4:
             return {"action": "view_notifications", "user_id": user_id}
         elif action == 5:
-            return {"action": "view_vote_counts"}
-        elif action == 6:
-            return {"action": "view_reports"}
-        elif action == 7:
             comment = input("Enter Feedback Comment: ")
             item_id = int(input("Enter Menu Item ID for Feedback: "))
             return {"action": "submit_feedback", "user_id": user_id, "comment": comment, "item_id": item_id, "role": self.client.role}

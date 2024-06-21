@@ -1,5 +1,3 @@
-
-
 from user_management import UserManagement
 from menu_management import MenuManagement
 from notification_service import NotificationService
@@ -25,16 +23,17 @@ class RequestHandler:
             'delete_menu_item': self.menu_management.delete_menu_item,
             'get_recommendations': self.recommendation_service.get_recommendations,
             'choose_recommendations': self.recommendation_service.choose_recommendations,
+            'view_vote_counts': self.voting_service.view_vote_counts,
+            'send_feedback': self.feedback_service.send_feedback,
             'send_notification': self.notification_service.send_notification,
             'view_notifications': self.notification_service.view_notifications,
             'vote_for_menu_item': self.voting_service.vote_for_menu_item,
-            'view_vote_counts': self.voting_service.view_vote_counts,
-            'view_reports': self.feedback_service.view_reports,
-            'submit_feedback': self.feedback_service.submit_feedback
+            #'give_review': self.feedback_service.give_review,
+            'submit_feedback': self.feedback_service.submit_feedback,
+            #'send_report': self.feedback_service.send_report
         }
         handler = action_handlers.get(request['action'], self.invalid_action)
         return handler(request, client_socket)
 
     def invalid_action(self, request, client_socket):
         return {'status': 'error', 'message': 'Invalid action'}
-

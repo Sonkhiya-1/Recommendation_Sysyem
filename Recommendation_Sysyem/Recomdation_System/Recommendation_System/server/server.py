@@ -1,10 +1,10 @@
 import socket
 import threading
 import logging
+import json
 from utils.custom_json_encoder import CustomJSONEncoder
 from request_handler import RequestHandler
 from utils.db_connection import get_db_connection
-import json
 
 class Server:
     def __init__(self, host, port):
@@ -58,4 +58,3 @@ if __name__ == "__main__":
         'port': 12346
     }
     Server(server_config['host'], server_config['port'])
-

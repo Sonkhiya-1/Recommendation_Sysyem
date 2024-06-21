@@ -1,5 +1,3 @@
-
-
 import logging
 
 class VotingService:
@@ -17,7 +15,6 @@ class VotingService:
             logging.error(f"Error in vote_for_menu_item: {e}")
             return {'status': 'error', 'message': 'Failed to submit vote'}
 
-
     def view_vote_counts(self, request, client_socket):
         try:
             cursor = self.db.cursor(dictionary=True)
@@ -32,6 +29,3 @@ class VotingService:
         except Exception as e:
             logging.error(f"Error in view_vote_counts: {e}")
             return {'status': 'error', 'message': 'Failed to retrieve vote counts'}
-
-
-

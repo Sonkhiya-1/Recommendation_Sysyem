@@ -1,5 +1,3 @@
-
-
 import logging
 from utils.custom_json_encoder import CustomJSONEncoder
 import json

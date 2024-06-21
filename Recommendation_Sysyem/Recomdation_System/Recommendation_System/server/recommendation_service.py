@@ -1,6 +1,6 @@
-
 import logging
 import json
+from datetime import datetime
 from utils.custom_json_encoder import CustomJSONEncoder
 
 class RecommendationService:
@@ -36,14 +36,19 @@ class RecommendationService:
         try:
             menu_item_ids = request['menu_item_ids']
             user_id = request['user_id']
+            current_timestamp = datetime.now()
             cursor = self.db.cursor(dictionary=True)
             for menu_item_id in menu_item_ids:
                 cursor.execute("SELECT price FROM menu_items WHERE id=%s", (menu_item_id,))
                 result = cursor.fetchone()
                 if result:
                     price = result['price']
-                    cursor.execute("INSERT INTO rollout_items (menu_item_id, chef_id, chosen, price) VALUES (%s, %s, %s, %s)", (menu_item_id, user_id, True, price))
-            self.db.commit()
+                    logging.debug(f"Fetched price for menu_item_id {menu_item_id}: {price}")
+                    cursor.execute("INSERT INTO rollout_items (menu_item_id, chef_id, chosen, price, timestamp) VALUES (%s, %s, %s, %s, %s)", (menu_item_id, user_id, True, price, current_timestamp))
+                    self.db.commit()  # Commit after each insertion
+                    logging.debug(f"Inserted rollout item: {menu_item_id} by user: {user_id} with price: {price} at {current_timestamp}")
+
+            # Send notification to all employees about the new recommendations
             self._send_notification_to_all_employees(f"New rollout items available. Please vote for your preferred items.")
             return {'status': 'success', 'message': 'Recommendations chosen'}
         except Exception as e:
@@ -52,11 +57,12 @@ class RecommendationService:
 
     def _send_notification_to_all_employees(self, message):
         try:
-            cursor = self.db.cursor()
+            cursor = self.db.cursor(dictionary=True)
             cursor.execute("SELECT id FROM users WHERE role = 3")
             employees = cursor.fetchall()
             for employee in employees:
-                cursor.execute("INSERT INTO notifications (user_id, message) VALUES (%s, %s)", (employee['id'], message))
+                logging.debug(f"Inserting notification for employee {employee['id']}")
+                cursor.execute("INSERT INTO notifications (user_id, message, viewed) VALUES (%s, %s, %s)", (employee['id'], message, False))
             self.db.commit()
             self._broadcast_notification(message)
         except Exception as e:
@@ -70,4 +76,3 @@ class RecommendationService:
                     client_socket.sendall(notification.encode())
                 except Exception as e:
                     logging.error(f"Error sending notification to client: {e}")
-
