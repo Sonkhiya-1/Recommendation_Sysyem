@@ -27,15 +27,15 @@ class Client:
         return s
 
     def send_request(self, request):
-        print(f"Sending request: {request}")
+        
         try:
             self.socket.sendall(json.dumps(request).encode())
             print("Request sent, waiting for response...")
             response = self.socket.recv(4096).decode()
-            print(f"Raw response: {response}")
+        
             return json.loads(response)
         except socket.timeout:
-            print("Socket timeout occurred while waiting for the response.")
+           
             return {'status': 'error', 'message': 'Socket timeout'}
         except Exception as e:
             print(f"Error sending request: {e}")
@@ -66,7 +66,7 @@ class Client:
             self.menu_display.display_menu(self.role)
             try:
                 action = int(input("Enter your choice: "))
-                if (self.role == 1 and action == 5) or (self.role == 2 and action == 7) or (self.role == 3 and action == 6):
+                if (self.role == 1 and action == 8) or (self.role == 2 and action == 10) or (self.role == 3 and action == 6):
                     print("Logging out...")
                     break
                 elif self.role == 3 and action == 4:  # View Notifications
@@ -75,7 +75,6 @@ class Client:
                         notifications = response['notifications']
                         rollout_items = response['rollout_items']
                         if notifications:
-                            print("Notifications:")
                             for notification in notifications:
                                 print(f"- {notification['message']}")
                         if rollout_items:
@@ -114,6 +113,7 @@ class Client:
                 print("Invalid input. Please enter a number corresponding to your choice.")
             except Exception as e:
                 print(f"An error occurred: {e}")
+
 
 if __name__ == "__main__":
     client = Client('localhost', 12346)

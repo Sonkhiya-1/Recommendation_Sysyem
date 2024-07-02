@@ -27,7 +27,6 @@ class NotificationListener:
                     except json.JSONDecodeError:
                         break
             except Exception as e:
-                print(f"Error listening for notifications: {e}")
                 break
 
     def _extract_json(self, buffer):

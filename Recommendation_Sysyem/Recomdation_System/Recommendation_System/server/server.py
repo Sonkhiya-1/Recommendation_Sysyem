@@ -33,10 +33,10 @@ class Server:
                 request = client_socket.recv(1024).decode()
                 if not request:
                     break
-                print(f"Received request: {request}")
+                logging.debug(f"Received request: {request}")
                 response = self.request_handler.handle_request(json.loads(request), client_socket)
                 response_json = json.dumps(response, cls=CustomJSONEncoder)
-                print(f"Sending response: {response_json}")
+                logging.debug(f"Sending response: {response_json}")
                 client_socket.sendall(response_json.encode())
             except json.JSONDecodeError as json_err:
                 logging.error(f"JSON decode error: {json_err}")
@@ -52,7 +52,7 @@ class Server:
         client_socket.sendall(error_response.encode())
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG)  # Set logging level to DEBUG
     server_config = {
         'host': 'localhost',
         'port': 12346

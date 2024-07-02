@@ -1,10 +1,13 @@
+
+
 import logging
 from utils.custom_json_encoder import CustomJSONEncoder
 import json
 
 class MenuManagement:
-    def __init__(self, db):
+    def __init__(self, db, notification_service):
         self.db = db
+        self.notification_service = notification_service
 
     def view_menu(self, request, client_socket):
         try:
@@ -25,6 +28,7 @@ class MenuManagement:
             cursor = self.db.cursor()
             cursor.execute("INSERT INTO menu_items (name, price, availability) VALUES (%s, %s, %s)", (name, price, availability))
             self.db.commit()
+            self.notification_service.send_notification_to_all_employees(f"New menu item added: {name}")
             return {'status': 'success', 'message': 'Menu item added'}
         except Exception as e:
             logging.error(f"Error in add_menu_item: {e}")
@@ -38,6 +42,7 @@ class MenuManagement:
             cursor = self.db.cursor()
             self._execute_update(cursor, item_id, name, price, availability)
             self.db.commit()
+            self.notification_service.send_notification_to_all_employees(f"Menu item updated: ID {item_id}")
             return {'status': 'success', 'message': 'Menu item updated'}
         except Exception as e:
             logging.error(f"Error in update_menu_item: {e}")
@@ -67,6 +72,7 @@ class MenuManagement:
             cursor = self.db.cursor()
             cursor.execute("DELETE FROM menu_items WHERE id=%s", (request['item_id'],))
             self.db.commit()
+            self.notification_service.send_notification_to_all_employees(f"Menu item deleted: ID {request['item_id']}")
             return {'status': 'success', 'message': 'Menu item deleted'}
         except Exception as e:
             logging.error(f"Error in delete_menu_item: {e}")

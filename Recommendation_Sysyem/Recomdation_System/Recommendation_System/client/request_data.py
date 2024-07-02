@@ -28,6 +28,14 @@ class RequestData:
         elif action == 4:
             item_id = int(input("Enter Menu Item ID to Delete: "))
             return {"action": "delete_menu_item", "item_id": item_id, "role": self.client.role}
+        elif action == 5:
+            return {"action": "view_discard_list"}
+        elif action == 6:
+            item_id = int(input("Enter Menu Item ID to Remove from Menu: "))
+            return {"action": "remove_menu_item", "item_id": item_id, "role": self.client.role}
+        elif action == 7:
+            item_id = int(input("Enter Menu Item ID for Detailed Feedback Request: "))
+            return {"action": "request_detailed_feedback", "item_id": item_id, "role": self.client.role}
 
     def _get_chef_request_data(self, action):
         if action == 1:
@@ -47,6 +55,14 @@ class RequestData:
         elif action == 6:
             report = input("Enter Report: ")
             return {"action": "send_report", "report": report, "role": self.client.role}
+        elif action == 7:
+            return {"action": "view_discard_list"}
+        elif action == 8:
+            item_id = int(input("Enter Menu Item ID to Remove from Menu: "))
+            return {"action": "remove_menu_item", "item_id": item_id, "role": self.client.role}
+        elif action == 9:
+            item_id = int(input("Enter Menu Item ID for Detailed Feedback Request: "))
+            return {"action": "request_detailed_feedback", "item_id": item_id, "role": self.client.role}
 
     def _get_employee_request_data(self, action, user_id):
         if action == 1:

@@ -18,7 +18,10 @@ class MenuDisplay:
         print("2. Add Menu Item")
         print("3. Update Menu Item")
         print("4. Delete Menu Item")
-        print("5. Logout")
+        print("5. View Discard Menu Item List")
+        print("6. Remove Food Item from Menu")
+        print("7. Request Detailed Feedback for Food Item")
+        print("8. Logout")
 
     def _display_chef_menu(self):
         print("\nChef Actions:")
@@ -28,7 +31,10 @@ class MenuDisplay:
         print("4. View Vote Counts")
         print("5. Send Feedback")
         print("6. Send Report")
-        print("7. Logout")
+        print("7. View Discard Menu Item List")
+        print("8. Remove Food Item from Menu")
+        print("9. Request Detailed Feedback for Food Item")
+        print("10. Logout")
 
     def _display_employee_menu(self):
         print("\nEmployee Actions:")
