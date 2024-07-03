@@ -1,8 +1,10 @@
+# server/services/menu_service.py
+
 import logging
 import json
 from utils.custom_json_encoder import CustomJSONEncoder
 
-class MenuManagement:
+class MenuService:
     def __init__(self, db, notification_service):
         self.db = db
         self.notification_service = notification_service

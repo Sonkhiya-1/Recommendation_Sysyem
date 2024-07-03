@@ -1,32 +1,33 @@
 import json
+import logging
+import time
+import socket
 
 class NotificationListener:
     def __init__(self, socket):
         self.socket = socket
+        self.retry_delay = 5
 
     def listen_for_notifications(self):
-        print("Starting to listen for notifications...")
         buffer = ""
         while True:
             try:
                 data = self.socket.recv(4096).decode()
                 if not data:
                     continue
-
                 buffer += data
                 while True:
-                    try:
-                        notification, buffer = self._extract_json(buffer)
-                        if notification:
-                            notification_data = json.loads(notification)
-                            print(f"Notification received: {notification_data}")
-                            if notification_data.get('status') == 'notification':
-                                print(f"\nNotification: {notification_data['message']}")
-                        else:
-                            break
-                    except json.JSONDecodeError:
+                    notification, buffer = self._extract_json(buffer)
+                    if notification:
+                        notification_data = json.loads(notification)
+                        logging.debug(f"Notification received: {notification_data}")
+                        if notification_data.get('status') == 'notification':
+                            print(f"\nNotification: {notification_data['message']}")
+                    else:
                         break
+            
             except Exception as e:
+                logging.error(f"Error listening for notifications: {e}")
                 break
 
     def _extract_json(self, buffer):

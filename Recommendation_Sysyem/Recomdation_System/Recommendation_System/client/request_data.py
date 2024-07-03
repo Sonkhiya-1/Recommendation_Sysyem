@@ -3,11 +3,11 @@ class RequestData:
         self.client = client
 
     def get_request_data(self, action, role, user_id):
-        if role == 1:  # Admin
+        if role == 1:
             return self._get_admin_request_data(action)
-        elif role == 2:  # Chef
+        elif role == 2:
             return self._get_chef_request_data(action)
-        elif role == 3:  # Employee
+        elif role == 3:
             return self._get_employee_request_data(action, user_id)
         return None
 
@@ -77,7 +77,7 @@ class RequestData:
             comment = input("Enter Comment: ")
             return {"action": "give_review", "dish_id": dish_id, "rating": rating, "comment": comment, "role": self.client.role}
         elif action == 4:
-            return {"action": "view_notifications", "user_id": user_id}
+            return {"action": "view_notifications", "user_id": user_id, "role": self.client.role}
         elif action == 5:
             comment = input("Enter Feedback Comment: ")
             item_id = int(input("Enter Menu Item ID for Feedback: "))
