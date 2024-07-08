@@ -1,4 +1,4 @@
-from responses.base_response_handler import BaseResponseHandler
+from client.responses.base_response_handler import BaseResponseHandler
 
 class DiscardListHandler(BaseResponseHandler):
     @staticmethod

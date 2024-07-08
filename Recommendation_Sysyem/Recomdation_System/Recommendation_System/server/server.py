@@ -4,14 +4,14 @@ import logging
 import json
 from utils.custom_json_encoder import CustomJSONEncoder
 from utils.db_connection import get_db_connection
-from services.feedback_service import FeedbackService
-from services.menu_service import MenuService
-from services.notification_service import NotificationService
-from services.recommendation_service import RecommendationService
-from services.voting_service import VotingService
-from services.discard_item_service import DiscardItemService
-from user_management import UserManagement
-from request_handler import RequestHandler
+from server.services.feedback_service import FeedbackService
+from server.services.menu_service import MenuService
+from server.services.notification_service import NotificationService
+from server.services.recommendation_service import RecommendationService
+from server.services.voting_service import VotingService
+from server.services.discard_item_service import DiscardItemService
+from server.user_management import UserManagement
+from server.request_handler import RequestHandler
 
 
 def create_request_handler(db, clients):
@@ -81,7 +81,7 @@ class Server:
         error_response = json.dumps({'status': 'error', 'message': message})
         client_socket.sendall(error_response.encode())
 
-import logging
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG,

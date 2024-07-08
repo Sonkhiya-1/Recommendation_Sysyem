@@ -2,7 +2,7 @@
 
 
 import logging
-from sentiment_analysis import SentimentAnalysis
+from server.sentiment_analysis import SentimentAnalysis
 from decimal import Decimal
 
 class FeedbackService:

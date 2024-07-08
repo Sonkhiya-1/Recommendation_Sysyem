@@ -1,5 +1,5 @@
 import logging
-from sentiment_analysis import SentimentAnalysis
+from server.sentiment_analysis import SentimentAnalysis
 
 class DiscardItemService:
     def __init__(self, db, notification_service):

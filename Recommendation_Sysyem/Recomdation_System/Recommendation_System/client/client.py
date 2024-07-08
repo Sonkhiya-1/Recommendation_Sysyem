@@ -1,18 +1,18 @@
-from responses.notification_handler import NotificationHandler
+from client.responses.notification_handler import NotificationHandler
 import socket
 import json
 import threading
 import logging
-from menu_display import MenuDisplay
-from request_data import RequestData
-from notification_listener import NotificationListener
-from utils.socket_utils import create_socket
-from responses.menu_handler import MenuHandler
-from responses.base_response_handler import BaseResponseHandler
-from responses.discard_list_handler import DiscardListHandler
-from responses.message_handler import MessageHandler
-from responses.recommendations_handler import RecommendationsHandler
-from responses.vote_counts_handler import VoteCountsHandler
+from client.menu_display import MenuDisplay
+from client.request_data import RequestData
+from client.notification_listener import NotificationListener
+from client.utils.socket_utils import create_socket
+from client.responses.menu_handler import MenuHandler
+from client.responses.base_response_handler import BaseResponseHandler
+from client.responses.discard_list_handler import DiscardListHandler
+from client.responses.message_handler import MessageHandler
+from client.responses.recommendations_handler import RecommendationsHandler
+from client.responses.vote_counts_handler import VoteCountsHandler
 
 class Client:
     def __init__(self, host, port):
@@ -31,8 +31,21 @@ class Client:
     def send_request(self, request):
         try:
             self.socket.sendall(json.dumps(request).encode())
-            response = self.socket.recv(4096).decode()
-            return json.loads(response)
+
+            buffer = ""
+            while True:
+                data = self.socket.recv(4096).decode()
+                if not data:
+                    break
+                buffer += data
+ 
+                try:
+                    response = json.loads(buffer)
+                    buffer = ""
+                    return response
+                except json.JSONDecodeError as e:
+                    logging.debug(f"Incomplete JSON data received, continuing to read. Error: {e}")
+
         except socket.timeout:
             logging.error("Socket timeout occurred")
             return {'status': 'error', 'message': 'Socket timeout'}
@@ -46,7 +59,8 @@ class Client:
         request = {"action": "login", "employee_id": employee_id, "password": password}
         response = self.send_request(request)
         if response['status'] == 'success':
-            self.role = response.get('role')
+            role_map = {"Admin": 1, "Chef": 2, "Employee": 3}
+            self.role = role_map.get(response.get('role'))
             self.user_id = response.get('user_id')
             return True
         else:
@@ -65,7 +79,12 @@ class Client:
                 if not request:
                     print("Invalid action selected. Please try again.")
                     continue
-                response = self.send_request(request)
+                
+                if action == 6 and self.role == 3:
+                    response = self.update_profile(request)
+                else:
+                    response = self.send_request(request)
+
                 self.handle_response(response, action)
             except ValueError:
                 print("Invalid input. Please enter a number corresponding to your choice.")
@@ -74,10 +93,22 @@ class Client:
 
     def _is_logout_action(self, action):
         return (
-            (self.role == 1 and action == 8) or
-            (self.role == 2 and action == 10) or
-            (self.role == 3 and action == 6)
+            (self.role == 1 and action == 8) or  # Admin logout action
+            (self.role == 2 and action == 10) or  # Chef logout action
+            (self.role == 3 and action == 7)  # Employee logout action
         )
+
+    def update_profile(self, request):
+        try:
+            response = self.send_request(request)
+            if response['status'] == 'success':
+                print("Profile updated successfully.")
+            else:
+                print(f"Failed to update profile: {response['message']}")
+            return response
+        except Exception as e:
+            logging.error(f"Error updating profile: {e}")
+            return {'status': 'error', 'message': str(e)}
 
     def handle_response(self, response, action):
         if response['status'] == 'success':
@@ -95,7 +126,6 @@ class Client:
                     VoteCountsHandler.display_vote_counts(response)
                 elif self.role == 3:
                     NotificationHandler.display_notifications(response)
-                    
             elif action == 5 and self.role == 2:  
                 MessageHandler.display_message(response)
             elif action == 6 and self.role == 2: 
@@ -112,7 +142,6 @@ class Client:
                 print("Action completed successfully.")
         else:
             print(f"Error: {response['message']}")
-
 
 if __name__ == "__main__":
     client = Client('localhost', 12346)

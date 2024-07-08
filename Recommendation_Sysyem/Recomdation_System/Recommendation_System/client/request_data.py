@@ -18,24 +18,48 @@ class RequestData:
             name = input("Enter Menu Item Name: ")
             price = float(input("Enter Menu Item Price: "))
             availability = input("Enter Menu Item Availability (yes/no): ")
-            return {"action": "add_menu_item", "name": name, "price": price, "availability": availability, "role": self.client.role}
+            dietary_category = input("Enter Dietary Category (Vegetarian/Non Vegetarian/Eggetarian): ")
+            spice_level = input("Enter Spice Level (High/Medium/Low): ")
+            is_sweet = input("Is the dish sweet? (Yes/No): ").lower() == 'yes'
+            return {
+                "action": "add_menu_item",
+                "name": name,
+                "price": price,
+                "availability": availability,
+                "dietary_category": dietary_category,
+                "spice_level": spice_level,
+                "is_sweet": is_sweet
+            }
         elif action == 3:
             item_id = int(input("Enter Menu Item ID to Update: "))
             name = input("Enter New Name (leave empty if no change): ")
             price = input("Enter New Price (leave empty if no change): ")
             availability = input("Enter New Availability (leave empty if no change): ")
-            return {"action": "update_menu_item", "item_id": item_id, "name": name, "price": price, "availability": availability, "role": self.client.role}
+            dietary_category = input("Enter New Dietary Category (leave empty if no change): ")
+            spice_level = input("Enter New Spice Level (leave empty if no change): ")
+            is_sweet = input("Is the dish sweet? (Yes/No): ").lower() == 'yes'
+            return {
+                "action": "update_menu_item",
+                "item_id": item_id,
+                "name": name,
+                "price": price,
+                "availability": availability,
+                "dietary_category": dietary_category,
+                "spice_level": spice_level,
+                "is_sweet": is_sweet
+            }
         elif action == 4:
             item_id = int(input("Enter Menu Item ID to Delete: "))
-            return {"action": "delete_menu_item", "item_id": item_id, "role": self.client.role}
+            return {"action": "delete_menu_item", "item_id": item_id}
         elif action == 5:
             return {"action": "view_discard_list"}
         elif action == 6:
             item_id = int(input("Enter Menu Item ID to Remove from Menu: "))
-            return {"action": "remove_menu_item", "item_id": item_id, "role": self.client.role}
+            return {"action": "remove_menu_item", "item_id": item_id}
         elif action == 7:
             item_id = int(input("Enter Menu Item ID for Detailed Feedback Request: "))
-            return {"action": "request_detailed_feedback", "item_id": item_id, "role": self.client.role}
+            return {"action": "request_detailed_feedback", "item_id": item_id}
+
 
     def _get_chef_request_data(self, action):
         if action == 1:
@@ -82,3 +106,11 @@ class RequestData:
             comment = input("Enter Feedback Comment: ")
             item_id = int(input("Enter Menu Item ID for Feedback: "))
             return {"action": "submit_feedback", "user_id": user_id, "comment": comment, "item_id": item_id, "role": self.client.role}
+        elif action == 6:
+            preferences = {
+                'dietary_preference': input("Please select your dietary preference (Vegetarian/Non Vegetarian/Eggetarian): "),
+                'spice_level': input("Please select your spice level (High/Medium/Low): "),
+                'cuisine_preference': input("Please select your cuisine preference (North Indian/South Indian/Other): "),
+                'sweet_tooth': input("Do you have a sweet tooth? (Yes/No): ") == 'Yes'
+            }
+            return {"action": "update_profile", "user_id": user_id, "preferences": preferences}

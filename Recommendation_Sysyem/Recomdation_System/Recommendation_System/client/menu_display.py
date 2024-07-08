@@ -43,4 +43,5 @@ class MenuDisplay:
         print("3. Give Review")
         print("4. View Notifications")
         print("5. Submit Feedback")
-        print("6. Logout")
+        print("6. Update Profile")
+        print("7. Logout")
