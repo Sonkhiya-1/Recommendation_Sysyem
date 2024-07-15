@@ -111,6 +111,6 @@ class RequestData:
                 'dietary_preference': input("Please select your dietary preference (Vegetarian/Non Vegetarian/Eggetarian): "),
                 'spice_level': input("Please select your spice level (High/Medium/Low): "),
                 'cuisine_preference': input("Please select your cuisine preference (North Indian/South Indian/Other): "),
-                'sweet_tooth': input("Do you have a sweet tooth? (Yes/No): ") == 'Yes'
+                'sweet_tooth': input("Do you have a sweet tooth? (Yes/No): ").strip().lower() == 'yes'
             }
             return {"action": "update_profile", "user_id": user_id, "preferences": preferences}

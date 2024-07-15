@@ -4,13 +4,13 @@ import logging
 import json
 from utils.custom_json_encoder import CustomJSONEncoder
 from utils.db_connection import get_db_connection
-from server.services.feedback_service import FeedbackService
-from server.services.menu_service import MenuService
-from server.services.notification_service import NotificationService
-from server.services.recommendation_service import RecommendationService
-from server.services.voting_service import VotingService
-from server.services.discard_item_service import DiscardItemService
-from server.services.user_management import UserManagement
+from server.services.feedback.feedback_service import FeedbackService
+from server.services.menu.menu_service import MenuService
+from server.services.notifications.notification_service import NotificationService
+from server.services.recommendation.recommendation_service import RecommendationService
+from server.services.voting.voting_service import VotingService
+from server.services.dicard_item.discard_item_service import DiscardItemService
+from server.services.user_management.user_management import UserManagement
 from server.request_handler import RequestHandler
 
 class Server:
@@ -77,15 +77,4 @@ class Server:
         error_response = json.dumps({'status': 'error', 'message': message})
         client_socket.sendall(error_response.encode())
 
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG,
-                        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                        handlers=[
-                            logging.FileHandler("server.log"),
-                            logging.StreamHandler()
-                        ])
-    server_config = {
-        'host': 'localhost',
-        'port': 12346
-    }
-    Server(server_config['host'], server_config['port'])
+

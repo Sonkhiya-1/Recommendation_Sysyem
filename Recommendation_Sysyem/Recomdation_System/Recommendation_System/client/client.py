@@ -1,18 +1,16 @@
+
+from datetime import datetime, timedelta
+from client.menu_display import MenuDisplay
+from client.request_data import RequestData
 import socket
 import json
 import threading
 import logging
-from client.menu_display import MenuDisplay
-from client.request_data import RequestData
+from datetime import datetime, timedelta
 from client.notification_listener import NotificationListener
 from client.utils.socket_utils import create_socket
-from client.responses.menu_handler import MenuHandler
-from client.responses.base_response_handler import BaseResponseHandler
-from client.responses.discard_list_handler import DiscardListHandler
-from client.responses.message_handler import MessageHandler
-from client.responses.recommendations_handler import RecommendationsHandler
-from client.responses.vote_counts_handler import VoteCountsHandler
-from client.responses.notification_handler import NotificationHandler
+from client.handlers.action_handler import initialize_action_handlers
+from client.handlers.login_handler import LoginHandler
 
 class Client:
     def __init__(self, host, port):
@@ -27,6 +25,8 @@ class Client:
         self.notification_thread = threading.Thread(
             target=self.notification_listener.listen_for_notifications, daemon=True)
         self.notification_thread.start()
+        self.action_handlers = initialize_action_handlers(self)
+        self.login_handler = LoginHandler(self)
 
     def send_request(self, request):
         try:
@@ -38,7 +38,7 @@ class Client:
                 if not data:
                     break
                 buffer += data
- 
+
                 try:
                     response = json.loads(buffer)
                     buffer = ""
@@ -53,20 +53,6 @@ class Client:
             logging.error(f"Error sending request: {e}")
             return {'status': 'error', 'message': str(e)}
 
-    def login(self):
-        employee_id = input("Enter Employee ID: ")
-        password = input("Enter Password: ")
-        request = {"action": "login", "employee_id": employee_id, "password": password}
-        response = self.send_request(request)
-        if response['status'] == 'success':
-            role_map = {"Admin": 1, "Chef": 2, "Employee": 3}
-            self.role = role_map.get(response.get('role'))
-            self.user_id = response.get('user_id')
-            return True
-        else:
-            print(f"Login failed: {response['message']}")
-            return False
-
     def main_loop(self):
         while True:
             self.menu_display.display_menu(self.role)
@@ -80,11 +66,7 @@ class Client:
                     print("Invalid action selected. Please try again.")
                     continue
                 
-                if action == 6 and self.role == 3:
-                    response = self.update_profile(request)
-                else:
-                    response = self.send_request(request)
-
+                response = self.send_request(request)
                 self.handle_response(response, action)
             except ValueError:
                 print("Invalid input. Please enter a number corresponding to your choice.")
@@ -98,54 +80,23 @@ class Client:
             (self.role == 3 and action == 7)  # Employee logout action
         )
 
-    def update_profile(self, request):
-        try:
-            response = self.send_request(request)
-            if response['status'] == 'success':
-                print("Profile updated successfully.")
-            else:
-                print(f"Failed to update profile: {response['message']}")
-            return response
-        except Exception as e:
-            logging.error(f"Error updating profile: {e}")
-            return {'status': 'error', 'message': str(e)}
-
     def handle_response(self, response, action):
         if response['status'] == 'success':
-            if action == 1:
-                MenuHandler.display_menu(response)
-            elif action == 2:
-                if self.role == 2:  
-                    RecommendationsHandler.display_recommendations(response)
-                elif self.role == 3:  
-                    VoteCountsHandler.display_vote_counts(response)
-            elif action == 3 and self.role == 2: 
-                RecommendationsHandler.display_recommendations(response)
-            elif action == 4:
-                if self.role == 2:
-                    VoteCountsHandler.display_vote_counts(response)
-                elif self.role == 3:
-                    NotificationHandler.display_notifications(response)
-            elif action == 5 and self.role == 2:  
-                MessageHandler.display_message(response)
-            elif action == 6 and self.role == 2: 
-                MessageHandler.display_message(response)
-            elif action == 7:
-                DiscardListHandler.display_discard_list(response)
-            elif action == 8:
-                MessageHandler.display_message(response)
-            elif action == 9:
-                MessageHandler.display_message(response)
-            elif action == 10:
-                print("Logging out...")
+            handler = self.action_handlers.get(action)
+            if isinstance(handler, dict):
+                handler = handler.get(self.role)
+            if handler:
+                handler(response)
             else:
                 print("Action completed successfully.")
         else:
             print(f"Error: {response['message']}")
 
-if __name__ == "__main__":
-    client = Client('localhost', 12346)
-    if client.login():
-        client.main_loop()
-    else:
-        print("Exiting the program due to failed login.")
+    def _logout_handler(self, response):
+        print("Logging out...")
+
+    def handle_profile_update_response(self, response):
+        if response['status'] == 'success':
+            print("Profile updated successfully.")
+        else:
+            print(f"Failed to update profile: {response['message']}")
