@@ -2,10 +2,10 @@ def get_menu(cursor):
     cursor.execute("SELECT * FROM menu_items")
     return cursor.fetchall()
 
-def insert_menu_item(cursor, name, price, availability):
-    cursor.execute("INSERT INTO menu_items (name, price, availability) VALUES (%s, %s, %s)", (name, price, availability))
+def insert_menu_item(cursor, name, price, availability, dietary_category,spice_level, is_sweet):
+    cursor.execute("INSERT INTO menu_items (name, price, availability, dietary_category, spice_level, is_sweet) VALUES (%s, %s, %s, %s, %s, %s)", (name, price, availability, dietary_category, spice_level, is_sweet))
 
-def update_menu_item(cursor, item_id, name, price, availability):
+def update_menu_item(cursor, item_id, name, price, availability, dietary_category, spice_level, is_sweet):
     query = "UPDATE menu_items SET"
     params = []
     if name:
@@ -17,6 +17,15 @@ def update_menu_item(cursor, item_id, name, price, availability):
     if availability:
         query += " availability=%s,"
         params.append(availability)
+    if dietary_category:
+        query += " dietary_category=%s,"
+        params.append(dietary_category)
+    if spice_level:
+        query += " spice_level=%s,"
+        params.append(spice_level)
+    if is_sweet is not None:
+        query += " is_sweet=%s,"
+        params.append(is_sweet)
     query = query.rstrip(',')
     query += " WHERE id=%s"
     params.append(item_id)

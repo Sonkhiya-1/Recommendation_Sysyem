@@ -4,7 +4,6 @@ from .message_handler import MessageHandler
 from .recommendations_handler import RecommendationsHandler
 from .vote_counts_handler import VoteCountsHandler
 from .notification_handler import NotificationHandler
-import logging
 
 def initialize_action_handlers(client):
     return {
@@ -21,9 +20,11 @@ def initialize_action_handlers(client):
             3: NotificationHandler.display_notifications,       # Employee
         },
         5: {
+            1:DiscardListHandler.display_discard_list,          #Admin
             2: MessageHandler.display_message,                  # Chef
         },
         6: {
+            1: MessageHandler.display_message,
             2: MessageHandler.display_message,                  # Chef
             3: client.handle_profile_update_response,           # Employee (Profile Update)
         },
@@ -32,16 +33,3 @@ def initialize_action_handlers(client):
         9: MessageHandler.display_message,
         10: client._logout_handler
     }
-def update_profile(self, response):
-        try:
-            if response['status'] == 'success':
-                print("Profile updated successfully.")
-            else:
-                print(f"Failed to update profile: {response['message']}")
-        except Exception as e:
-            logging.error(f"Error updating profile: {e}")
-
-    
-
-def _logout_handler(self, response):
-    print("Logging out...")

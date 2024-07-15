@@ -23,8 +23,11 @@ class MenuService:
             return {'status': 'error', 'message': 'Permission denied'}
         try:
             name, price, availability = request['name'], request['price'], request['availability']
+            dietary_category = request['dietary_category']
+            spice_level = request['spice_level']
+            is_sweet = request['is_sweet']
             cursor = self.db.cursor()
-            insert_menu_item(cursor, name, price, availability)
+            insert_menu_item(cursor, name, price, availability, dietary_category,spice_level, is_sweet)
             self.db.commit()
             self.notification_service.send_notification_to_all_employees(f"New menu item added: {name}")
             return {'status': 'success', 'message': 'Menu item added'}
@@ -37,8 +40,11 @@ class MenuService:
             return {'status': 'error', 'message': 'Permission denied'}
         try:
             item_id, name, price, availability = request['item_id'], request['name'], request['price'], request['availability']
+            dietary_category = request['dietary_category']
+            spice_level = request['spice_level']
+            is_sweet = request['is_sweet']
             cursor = self.db.cursor()
-            update_menu_item(cursor, item_id, name, price, availability)
+            update_menu_item(cursor, item_id, name, price, availability, dietary_category, spice_level, is_sweet)
             self.db.commit()
             self.notification_service.send_notification_to_all_employees(f"Menu item updated: ID {item_id}")
             return {'status': 'success', 'message': 'Menu item updated'}
@@ -50,6 +56,7 @@ class MenuService:
         if request.get('role') != 1:
             return {'status': 'error', 'message': 'Permission denied'}
         try:
+            item_id = request['item_id']
             cursor = self.db.cursor()
             delete_menu_item(cursor, request['item_id'])
             self.db.commit()
