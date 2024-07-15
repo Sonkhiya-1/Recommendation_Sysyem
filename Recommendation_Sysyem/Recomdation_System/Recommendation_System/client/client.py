@@ -1,4 +1,3 @@
-from client.responses.notification_handler import NotificationHandler
 import socket
 import json
 import threading
@@ -13,6 +12,7 @@ from client.responses.discard_list_handler import DiscardListHandler
 from client.responses.message_handler import MessageHandler
 from client.responses.recommendations_handler import RecommendationsHandler
 from client.responses.vote_counts_handler import VoteCountsHandler
+from client.responses.notification_handler import NotificationHandler
 
 class Client:
     def __init__(self, host, port):

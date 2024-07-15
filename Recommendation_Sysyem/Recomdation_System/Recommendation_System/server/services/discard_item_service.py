@@ -1,5 +1,6 @@
 import logging
 from server.sentiment_analysis import SentimentAnalysis
+from queries.discard_item_queries import get_discard_list, delete_menu_item
 
 class DiscardItemService:
     def __init__(self, db, notification_service):
@@ -9,15 +10,7 @@ class DiscardItemService:
     def view_discard_list(self, request, client_socket):
         try:
             cursor = self.db.cursor(dictionary=True)
-            cursor.execute("""
-                SELECT mi.id, mi.name, mi.average_rating, 
-                       GROUP_CONCAT(DISTINCT f.comment SEPARATOR '; ') as sentiments
-                FROM menu_items mi
-                LEFT JOIN feedback f ON mi.id = f.menu_item_id AND f.sentiment = 'negative'
-                WHERE mi.average_rating < 2
-                GROUP BY mi.id, mi.name, mi.average_rating
-            """)
-            discard_list = cursor.fetchall()
+            discard_list = get_discard_list(cursor)
 
             for item in discard_list:
                 comments = item['sentiments'].split('; ') if item['sentiments'] else []
@@ -34,15 +27,13 @@ class DiscardItemService:
             logging.error(f"Error in view_discard_list: {e}")
             return {'status': 'error', 'message': f'Failed to retrieve discard list: {str(e)}'}
 
-
-
     def remove_menu_item(self, request, client_socket):
         if request.get('role') not in [1, 2]:
             return {'status': 'error', 'message': 'Permission denied'}
         try:
             item_id = request['item_id']
             cursor = self.db.cursor()
-            cursor.execute("DELETE FROM menu_items WHERE id=%s", (item_id,))
+            delete_menu_item(cursor, item_id)
             self.db.commit()
             logging.debug(f"Menu item {item_id} removed from menu.")
             return {'status': 'success', 'message': 'Menu item removed'}

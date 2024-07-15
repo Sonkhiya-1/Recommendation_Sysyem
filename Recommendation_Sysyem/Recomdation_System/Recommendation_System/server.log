@@ -1,200 +1,75 @@
-2024-07-07 16:23:09,639 - root - INFO - Server started on localhost:12346
-2024-07-07 16:26:22,576 - root - DEBUG - Received request: {"action": "login", "employee_id": "chef1", "password": "password123"}
-2024-07-07 16:26:22,576 - root - DEBUG - Sending response: {"status": "success", "role": "Chef", "user_id": 2}
-2024-07-07 16:26:24,812 - root - DEBUG - Received request: {"action": "view_vote_counts"}
-2024-07-07 16:26:24,812 - root - DEBUG - Executing query: 
-                SELECT mi.name, v.meal_type, COUNT(v.id) as vote_count
-                FROM votes v
-                JOIN menu_items mi ON v.menu_item_id = mi.id
-                JOIN rollout_items ri ON ri.menu_item_id = mi.id
-                WHERE DATE(v.voted_at) = %s AND DATE(ri.timestamp) = %s AND ri.chosen = TRUE
-                GROUP BY mi.name, v.meal_type
-             with date 2024-07-07
-2024-07-07 16:26:24,812 - root - DEBUG - Vote counts fetched: [{'name': 'Poha', 'meal_type': 'breakfast', 'vote_count': 5}, {'name': 'Boiled Eggs', 'meal_type': 'breakfast', 'vote_count': 5}, {'name': 'Sandwich', 'meal_type': 'lunch', 'vote_count': 2}, {'name': 'Aloo Paratha', 'meal_type': 'lunch', 'vote_count': 4}, {'name': 'Chicken Biryani', 'meal_type': 'dinner', 'vote_count': 5}]
-2024-07-07 16:26:24,812 - root - DEBUG - Sending response: {"status": "success", "vote_counts": [{"name": "Poha", "meal_type": "breakfast", "vote_count": 5}, {"name": "Boiled Eggs", "meal_type": "breakfast", "vote_count": 5}, {"name": "Sandwich", "meal_type": "lunch", "vote_count": 2}, {"name": "Aloo Paratha", "meal_type": "lunch", "vote_count": 4}, {"name": "Chicken Biryani", "meal_type": "dinner", "vote_count": 5}]}
-2024-07-07 16:26:36,661 - root - DEBUG - Received request: {"action": "choose_recommendations", "menu_item_ids": [1, 2, 4, 5], "user_id": 2, "role": 2}
-2024-07-07 16:26:36,674 - root - DEBUG - Fetched price for menu_item_id 1: 50.00
-2024-07-07 16:26:36,680 - root - DEBUG - Inserted rollout item: 1 by user: 2 with price: 50.00 at 2024-07-07 16:26:36.661690
-2024-07-07 16:26:36,682 - root - DEBUG - Fetched price for menu_item_id 2: 30.00
-2024-07-07 16:26:36,687 - root - DEBUG - Inserted rollout item: 2 by user: 2 with price: 30.00 at 2024-07-07 16:26:36.661690
-2024-07-07 16:26:36,689 - root - DEBUG - Fetched price for menu_item_id 4: 80.00
-2024-07-07 16:26:36,693 - root - DEBUG - Inserted rollout item: 4 by user: 2 with price: 80.00 at 2024-07-07 16:26:36.661690
-2024-07-07 16:26:36,694 - root - DEBUG - Fetched price for menu_item_id 5: 150.00
-2024-07-07 16:26:36,698 - root - DEBUG - Inserted rollout item: 5 by user: 2 with price: 150.00 at 2024-07-07 16:26:36.661690
-2024-07-07 16:26:36,698 - root - DEBUG - Inserting notification for employee 3
-2024-07-07 16:26:36,700 - root - DEBUG - Inserting notification for employee 4
-2024-07-07 16:26:36,702 - root - DEBUG - Sending response: {"status": "success", "message": "Recommendations chosen"}
-2024-07-07 16:26:56,973 - root - DEBUG - Received request: {"action": "login", "employee_id": "emp1", "password": "password123"}
-2024-07-07 16:26:56,973 - root - DEBUG - Sending response: {"status": "success", "role": "Employee", "user_id": 3}
-2024-07-07 16:26:58,735 - root - DEBUG - Received request: {"action": "view_notifications", "user_id": 3, "role": 3}
-2024-07-07 16:26:58,754 - root - DEBUG - Fetched notifications for user 3: [{'id': 13, 'user_id': 3, 'message': 'New rollout items available. Please vote for your preferred items.', 'viewed': 0, 'timestamp': datetime.datetime(2024, 7, 7, 16, 26, 36)}]
-2024-07-07 16:26:58,759 - root - DEBUG - Marked notifications as viewed for user 3
-2024-07-07 16:26:58,761 - root - DEBUG - Fetched rollout items: [{'menu_item_id': 1, 'name': 'Poha', 'price': Decimal('50.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 26, 37)}, {'menu_item_id': 2, 'name': 'Boiled Eggs', 'price': Decimal('30.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 26, 37)}, {'menu_item_id': 4, 'name': 'Aloo Paratha', 'price': Decimal('80.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 26, 37)}, {'menu_item_id': 5, 'name': 'Chicken Biryani', 'price': Decimal('150.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 26, 37)}]
-2024-07-07 16:26:58,762 - root - DEBUG - Sending response: {"status": "success", "notifications": [{"id": 13, "user_id": 3, "message": "New rollout items available. Please vote for your preferred items.", "viewed": 0, "timestamp": "2024-07-07T16:26:36"}], "rollout_items": [{"menu_item_id": 1, "name": "Poha", "price": "50.00", "timestamp": "2024-07-07T16:26:37"}, {"menu_item_id": 2, "name": "Boiled Eggs", "price": "30.00", "timestamp": "2024-07-07T16:26:37"}, {"menu_item_id": 4, "name": "Aloo Paratha", "price": "80.00", "timestamp": "2024-07-07T16:26:37"}, {"menu_item_id": 5, "name": "Chicken Biryani", "price": "150.00", "timestamp": "2024-07-07T16:26:37"}]}
-2024-07-07 16:28:54,547 - root - DEBUG - Received request: {"action": "choose_recommendations", "menu_item_ids": [4, 3, 2, 1], "user_id": 2, "role": 2}
-2024-07-07 16:28:54,547 - root - DEBUG - Fetched price for menu_item_id 4: 80.00
-2024-07-07 16:28:54,563 - root - DEBUG - Inserted rollout item: 4 by user: 2 with price: 80.00 at 2024-07-07 16:28:54.547687
-2024-07-07 16:28:54,563 - root - DEBUG - Fetched price for menu_item_id 3: 60.00
-2024-07-07 16:28:54,573 - root - DEBUG - Inserted rollout item: 3 by user: 2 with price: 60.00 at 2024-07-07 16:28:54.547687
-2024-07-07 16:28:54,574 - root - DEBUG - Fetched price for menu_item_id 2: 30.00
-2024-07-07 16:28:54,578 - root - DEBUG - Inserted rollout item: 2 by user: 2 with price: 30.00 at 2024-07-07 16:28:54.547687
-2024-07-07 16:28:54,579 - root - DEBUG - Fetched price for menu_item_id 1: 50.00
-2024-07-07 16:28:54,582 - root - DEBUG - Inserted rollout item: 1 by user: 2 with price: 50.00 at 2024-07-07 16:28:54.547687
-2024-07-07 16:28:54,583 - root - DEBUG - Inserting notification for employee 3
-2024-07-07 16:28:54,584 - root - DEBUG - Inserting notification for employee 4
-2024-07-07 16:28:54,588 - root - DEBUG - Sending response: {"status": "success", "message": "Recommendations chosen"}
-2024-07-07 16:28:59,746 - root - DEBUG - Received request: {"action": "view_notifications", "user_id": 3, "role": 3}
-2024-07-07 16:28:59,746 - root - DEBUG - Fetched notifications for user 3: [{'id': 15, 'user_id': 3, 'message': 'New rollout items available. Please vote for your preferred items.', 'viewed': 0, 'timestamp': datetime.datetime(2024, 7, 7, 16, 28, 54)}]
-2024-07-07 16:28:59,761 - root - DEBUG - Marked notifications as viewed for user 3
-2024-07-07 16:28:59,761 - root - DEBUG - Fetched rollout items: [{'menu_item_id': 4, 'name': 'Aloo Paratha', 'price': Decimal('80.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 28, 55)}, {'menu_item_id': 3, 'name': 'Sandwich', 'price': Decimal('60.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 28, 55)}, {'menu_item_id': 2, 'name': 'Boiled Eggs', 'price': Decimal('30.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 28, 55)}, {'menu_item_id': 1, 'name': 'Poha', 'price': Decimal('50.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 28, 55)}]
-2024-07-07 16:28:59,767 - root - DEBUG - Sending response: {"status": "success", "notifications": [{"id": 15, "user_id": 3, "message": "New rollout items available. Please vote for your preferred items.", "viewed": 0, "timestamp": "2024-07-07T16:28:54"}], "rollout_items": [{"menu_item_id": 4, "name": "Aloo Paratha", "price": "80.00", "timestamp": "2024-07-07T16:28:55"}, {"menu_item_id": 3, "name": "Sandwich", "price": "60.00", "timestamp": "2024-07-07T16:28:55"}, {"menu_item_id": 2, "name": "Boiled Eggs", "price": "30.00", "timestamp": "2024-07-07T16:28:55"}, {"menu_item_id": 1, "name": "Poha", "price": "50.00", "timestamp": "2024-07-07T16:28:55"}]}
-2024-07-07 16:32:24,415 - root - INFO - Server started on localhost:12346
-2024-07-07 16:32:36,103 - root - DEBUG - Received request: {"action": "login", "employee_id": "chef1", "password": "password123"}
-2024-07-07 16:32:36,103 - root - DEBUG - Sending response: {"status": "success", "role": "Chef", "user_id": 2}
-2024-07-07 16:32:48,660 - root - DEBUG - Received request: {"action": "login", "employee_id": "emp1", "password": "password123"}
-2024-07-07 16:32:48,660 - root - DEBUG - Sending response: {"status": "success", "role": "Employee", "user_id": 3}
-2024-07-07 16:33:06,399 - root - DEBUG - Received request: {"action": "login", "employee_id": "chef1", "password": "password123"}
-2024-07-07 16:33:06,399 - root - DEBUG - Sending response: {"status": "success", "role": "Chef", "user_id": 2}
-2024-07-07 16:33:14,126 - root - DEBUG - Received request: {"action": "login", "employee_id": "emp1", "password": "password123"}
-2024-07-07 16:33:14,126 - root - DEBUG - Sending response: {"status": "success", "role": "Employee", "user_id": 3}
-2024-07-07 16:33:23,428 - root - DEBUG - Received request: {"action": "choose_recommendations", "menu_item_ids": [1, 4, 5, 2], "user_id": 2, "role": 2}
-2024-07-07 16:33:23,428 - root - DEBUG - Fetched price for menu_item_id 1: 50.00
-2024-07-07 16:33:23,445 - root - DEBUG - Inserted rollout item: 1 by user: 2 with price: 50.00 at 2024-07-07 16:33:23.428598
-2024-07-07 16:33:23,446 - root - DEBUG - Fetched price for menu_item_id 4: 80.00
-2024-07-07 16:33:23,450 - root - DEBUG - Inserted rollout item: 4 by user: 2 with price: 80.00 at 2024-07-07 16:33:23.428598
-2024-07-07 16:33:23,451 - root - DEBUG - Fetched price for menu_item_id 5: 150.00
-2024-07-07 16:33:23,454 - root - DEBUG - Inserted rollout item: 5 by user: 2 with price: 150.00 at 2024-07-07 16:33:23.428598
-2024-07-07 16:33:23,455 - root - DEBUG - Fetched price for menu_item_id 2: 30.00
-2024-07-07 16:33:23,457 - root - DEBUG - Inserted rollout item: 2 by user: 2 with price: 30.00 at 2024-07-07 16:33:23.428598
-2024-07-07 16:33:23,458 - root - DEBUG - Inserting notification for employee 3
-2024-07-07 16:33:23,460 - root - DEBUG - Inserting notification for employee 4
-2024-07-07 16:33:23,464 - root - DEBUG - Sending response: {"status": "success", "message": "Recommendations chosen"}
-2024-07-07 16:33:28,233 - root - DEBUG - Received request: {"action": "view_notifications", "user_id": 3, "role": 3}
-2024-07-07 16:33:28,233 - root - DEBUG - Fetched notifications for user 3: [{'id': 17, 'user_id': 3, 'message': 'New rollout items available. Please vote for your preferred items.', 'viewed': 0, 'timestamp': datetime.datetime(2024, 7, 7, 16, 33, 23)}]
-2024-07-07 16:33:28,233 - root - DEBUG - Marked notifications as viewed for user 3
-2024-07-07 16:33:28,248 - root - DEBUG - Fetched rollout items: [{'menu_item_id': 1, 'name': 'Poha', 'price': Decimal('50.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 33, 23)}, {'menu_item_id': 4, 'name': 'Aloo Paratha', 'price': Decimal('80.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 33, 23)}, {'menu_item_id': 5, 'name': 'Chicken Biryani', 'price': Decimal('150.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 33, 23)}, {'menu_item_id': 2, 'name': 'Boiled Eggs', 'price': Decimal('30.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 33, 23)}]
-2024-07-07 16:33:28,248 - root - DEBUG - Sending response: {"status": "success", "notifications": [{"id": 17, "user_id": 3, "message": "New rollout items available. Please vote for your preferred items.", "viewed": 0, "timestamp": "2024-07-07T16:33:23"}], "rollout_items": [{"menu_item_id": 1, "name": "Poha", "price": "50.00", "timestamp": "2024-07-07T16:33:23"}, {"menu_item_id": 4, "name": "Aloo Paratha", "price": "80.00", "timestamp": "2024-07-07T16:33:23"}, {"menu_item_id": 5, "name": "Chicken Biryani", "price": "150.00", "timestamp": "2024-07-07T16:33:23"}, {"menu_item_id": 2, "name": "Boiled Eggs", "price": "30.00", "timestamp": "2024-07-07T16:33:23"}]}
-2024-07-07 16:47:07,919 - root - INFO - Server started on localhost:12346
-2024-07-07 16:47:16,357 - root - DEBUG - Received request: {"action": "login", "employee_id": "emp1", "password": "password123"}
-2024-07-07 16:47:16,370 - root - DEBUG - Sending response: {"status": "success", "role": "Employee", "user_id": 3}
-2024-07-07 16:47:24,269 - root - DEBUG - Received request: {"action": "login", "employee_id": "chef1", "password": "password123"}
-2024-07-07 16:47:24,269 - root - DEBUG - Sending response: {"status": "success", "role": "Chef", "user_id": 2}
-2024-07-07 16:47:28,438 - root - DEBUG - Received request: {"action": "view_menu"}
-2024-07-07 16:47:28,454 - root - DEBUG - Sending response: {"status": "success", "menu": [{"id": 1, "name": "Poha", "price": "50.00", "average_rating": "4.5", "availability": "yes", "dietary_category": "Vegetarian", "spice_level": "Low", "is_sweet": 0}, {"id": 2, "name": "Boiled Eggs", "price": "30.00", "average_rating": "4.0", "availability": "yes", "dietary_category": "Eggetarian", "spice_level": "Low", "is_sweet": 0}, {"id": 3, "name": "Sandwich", "price": "60.00", "average_rating": "4.2", "availability": "yes", "dietary_category": "Vegetarian", "spice_level": "Medium", "is_sweet": 0}, {"id": 4, "name": "Aloo Paratha", "price": "80.00", "average_rating": "4.7", "availability": "yes", "dietary_category": "Vegetarian", "spice_level": "High", "is_sweet": 0}, {"id": 5, "name": "Chicken Biryani", "price": "150.00", "average_rating": "4.8", "availability": "yes", "dietary_category": "Non Vegetarian", "spice_level": "High", "is_sweet": 0}, {"id": 6, "name": "Gulab Jamun", "price": "40.00", "average_rating": "4.9", "availability": "yes", "dietary_category": "Vegetarian", "spice_level": "Low", "is_sweet": 1}]}
-2024-07-07 16:47:34,373 - root - DEBUG - Received request: {"action": "choose_recommendations", "menu_item_ids": [1, 2, 4, 5], "user_id": 2, "role": 2}
-2024-07-07 16:47:34,373 - root - DEBUG - Fetched price for menu_item_id 1: 50.00
-2024-07-07 16:47:34,393 - root - DEBUG - Inserted rollout item: 1 by user: 2 with price: 50.00 at 2024-07-07 16:47:34.373645
-2024-07-07 16:47:34,394 - root - DEBUG - Fetched price for menu_item_id 2: 30.00
-2024-07-07 16:47:34,399 - root - DEBUG - Inserted rollout item: 2 by user: 2 with price: 30.00 at 2024-07-07 16:47:34.373645
-2024-07-07 16:47:34,409 - root - DEBUG - Fetched price for menu_item_id 4: 80.00
-2024-07-07 16:47:34,417 - root - DEBUG - Inserted rollout item: 4 by user: 2 with price: 80.00 at 2024-07-07 16:47:34.373645
-2024-07-07 16:47:34,417 - root - DEBUG - Fetched price for menu_item_id 5: 150.00
-2024-07-07 16:47:34,428 - root - DEBUG - Inserted rollout item: 5 by user: 2 with price: 150.00 at 2024-07-07 16:47:34.373645
-2024-07-07 16:47:34,435 - root - DEBUG - Inserting notification for employee 3
-2024-07-07 16:47:34,436 - root - DEBUG - Inserting notification for employee 4
-2024-07-07 16:47:34,443 - root - DEBUG - Sending response: {"status": "success", "message": "Recommendations chosen"}
-2024-07-07 16:47:42,592 - root - DEBUG - Received request: {"action": "view_notifications", "user_id": 3, "role": 3}
-2024-07-07 16:47:42,595 - root - DEBUG - Fetched notifications for user 3: [{'id': 19, 'user_id': 3, 'message': 'New rollout items available. Please vote for your preferred items.', 'viewed': 0, 'timestamp': datetime.datetime(2024, 7, 7, 16, 47, 34)}]
-2024-07-07 16:47:42,602 - root - DEBUG - Marked notifications as viewed for user 3
-2024-07-07 16:47:42,605 - root - DEBUG - Fetched rollout items: [{'menu_item_id': 1, 'name': 'Poha', 'price': Decimal('50.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 47, 34)}, {'menu_item_id': 2, 'name': 'Boiled Eggs', 'price': Decimal('30.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 47, 34)}, {'menu_item_id': 4, 'name': 'Aloo Paratha', 'price': Decimal('80.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 47, 34)}, {'menu_item_id': 5, 'name': 'Chicken Biryani', 'price': Decimal('150.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 47, 34)}]
-2024-07-07 16:47:42,609 - root - DEBUG - Sending response: {"status": "success", "notifications": [{"id": 19, "user_id": 3, "message": "New rollout items available. Please vote for your preferred items.", "viewed": 0, "timestamp": "2024-07-07T16:47:34"}], "rollout_items": [{"menu_item_id": 1, "name": "Poha", "price": "50.00", "timestamp": "2024-07-07T16:47:34"}, {"menu_item_id": 2, "name": "Boiled Eggs", "price": "30.00", "timestamp": "2024-07-07T16:47:34"}, {"menu_item_id": 4, "name": "Aloo Paratha", "price": "80.00", "timestamp": "2024-07-07T16:47:34"}, {"menu_item_id": 5, "name": "Chicken Biryani", "price": "150.00", "timestamp": "2024-07-07T16:47:34"}]}
-2024-07-07 16:51:57,157 - root - INFO - Server started on localhost:12346
-2024-07-07 16:52:08,898 - root - DEBUG - Received request: {"action": "login", "employee_id": "chef1", "password": "password123"}
-2024-07-07 16:52:08,898 - root - DEBUG - Sending response: {"status": "success", "role": "Chef", "user_id": 2}
-2024-07-07 16:52:22,123 - root - DEBUG - Received request: {"action": "login", "employee_id": "emp1", "password": "password123"}
-2024-07-07 16:52:22,139 - root - DEBUG - Sending response: {"status": "success", "role": "Employee", "user_id": 3}
-2024-07-07 16:52:28,856 - root - DEBUG - Received request: {"action": "login", "employee_id": "chef1", "password": "password123"}
-2024-07-07 16:52:28,863 - root - DEBUG - Sending response: {"status": "success", "role": "Chef", "user_id": 2}
-2024-07-07 16:52:33,851 - root - ERROR - Error: [WinError 10054] An existing connection was forcibly closed by the remote host
-2024-07-07 16:52:57,953 - root - DEBUG - Received request: {"action": "login", "employee_id": "chef1", "password": "password123"}
-2024-07-07 16:52:57,956 - root - DEBUG - Sending response: {"status": "success", "role": "Chef", "user_id": 2}
-2024-07-07 16:53:07,387 - root - DEBUG - Received request: {"action": "choose_recommendations", "menu_item_ids": [1, 2, 4, 5], "user_id": 2, "role": 2}
-2024-07-07 16:53:07,387 - root - DEBUG - Fetched price for menu_item_id 1: 50.00
-2024-07-07 16:53:07,405 - root - DEBUG - Inserted rollout item: 1 by user: 2 with price: 50.00 at 2024-07-07 16:53:07.387047
-2024-07-07 16:53:07,408 - root - DEBUG - Fetched price for menu_item_id 2: 30.00
-2024-07-07 16:53:07,412 - root - DEBUG - Inserted rollout item: 2 by user: 2 with price: 30.00 at 2024-07-07 16:53:07.387047
-2024-07-07 16:53:07,421 - root - DEBUG - Fetched price for menu_item_id 4: 80.00
-2024-07-07 16:53:07,430 - root - DEBUG - Inserted rollout item: 4 by user: 2 with price: 80.00 at 2024-07-07 16:53:07.387047
-2024-07-07 16:53:07,434 - root - DEBUG - Fetched price for menu_item_id 5: 150.00
-2024-07-07 16:53:07,444 - root - DEBUG - Inserted rollout item: 5 by user: 2 with price: 150.00 at 2024-07-07 16:53:07.387047
-2024-07-07 16:53:07,449 - root - DEBUG - Inserting notification for employee 3
-2024-07-07 16:53:07,452 - root - DEBUG - Inserting notification for employee 4
-2024-07-07 16:53:07,460 - root - DEBUG - Sending response: {"status": "success", "message": "Recommendations chosen"}
-2024-07-07 16:53:19,072 - root - DEBUG - Received request: {"action": "view_notifications", "user_id": 3, "role": 3}
-2024-07-07 16:53:19,088 - root - DEBUG - Fetched notifications for user 3: [{'id': 21, 'user_id': 3, 'message': 'New rollout items available. Please vote for your preferred items.', 'viewed': 0, 'timestamp': datetime.datetime(2024, 7, 7, 16, 53, 7)}]
-2024-07-07 16:53:19,102 - root - DEBUG - Marked notifications as viewed for user 3
-2024-07-07 16:53:19,106 - root - DEBUG - Fetched rollout items: [{'menu_item_id': 1, 'name': 'Poha', 'price': Decimal('50.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 53, 7)}, {'menu_item_id': 2, 'name': 'Boiled Eggs', 'price': Decimal('30.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 53, 7)}, {'menu_item_id': 4, 'name': 'Aloo Paratha', 'price': Decimal('80.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 53, 7)}, {'menu_item_id': 5, 'name': 'Chicken Biryani', 'price': Decimal('150.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 53, 7)}]
-2024-07-07 16:53:19,112 - root - ERROR - Error in view_notifications: 'dietary_category'
-2024-07-07 16:53:19,113 - root - DEBUG - Sending response: {"status": "error", "message": "Failed to retrieve notifications"}
-2024-07-07 16:53:22,169 - root - DEBUG - Received request: {"action": "view_notifications", "user_id": 3, "role": 3}
-2024-07-07 16:53:22,169 - root - DEBUG - Fetched notifications for user 3: []
-2024-07-07 16:53:22,169 - root - DEBUG - Sending response: {"status": "success", "notifications": [], "rollout_items": []}
-2024-07-07 16:53:30,309 - root - DEBUG - Received request: {"action": "choose_recommendations", "menu_item_ids": [1, 2, 4, 5], "user_id": 2, "role": 2}
-2024-07-07 16:53:30,323 - root - DEBUG - Fetched price for menu_item_id 1: 50.00
-2024-07-07 16:53:30,329 - root - DEBUG - Inserted rollout item: 1 by user: 2 with price: 50.00 at 2024-07-07 16:53:30.309864
-2024-07-07 16:53:30,332 - root - DEBUG - Fetched price for menu_item_id 2: 30.00
-2024-07-07 16:53:30,339 - root - DEBUG - Inserted rollout item: 2 by user: 2 with price: 30.00 at 2024-07-07 16:53:30.309864
-2024-07-07 16:53:30,341 - root - DEBUG - Fetched price for menu_item_id 4: 80.00
-2024-07-07 16:53:30,349 - root - DEBUG - Inserted rollout item: 4 by user: 2 with price: 80.00 at 2024-07-07 16:53:30.309864
-2024-07-07 16:53:30,349 - root - DEBUG - Fetched price for menu_item_id 5: 150.00
-2024-07-07 16:53:30,360 - root - DEBUG - Inserted rollout item: 5 by user: 2 with price: 150.00 at 2024-07-07 16:53:30.309864
-2024-07-07 16:53:30,364 - root - DEBUG - Inserting notification for employee 3
-2024-07-07 16:53:30,370 - root - DEBUG - Inserting notification for employee 4
-2024-07-07 16:53:30,378 - root - DEBUG - Sending response: {"status": "success", "message": "Recommendations chosen"}
-2024-07-07 16:53:34,212 - root - DEBUG - Received request: {"action": "view_notifications", "user_id": 3, "role": 3}
-2024-07-07 16:53:34,228 - root - DEBUG - Fetched notifications for user 3: [{'id': 23, 'user_id': 3, 'message': 'New rollout items available. Please vote for your preferred items.', 'viewed': 0, 'timestamp': datetime.datetime(2024, 7, 7, 16, 53, 30)}]
-2024-07-07 16:53:34,243 - root - DEBUG - Marked notifications as viewed for user 3
-2024-07-07 16:53:34,248 - root - DEBUG - Fetched rollout items: [{'menu_item_id': 1, 'name': 'Poha', 'price': Decimal('50.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 53, 30)}, {'menu_item_id': 2, 'name': 'Boiled Eggs', 'price': Decimal('30.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 53, 30)}, {'menu_item_id': 4, 'name': 'Aloo Paratha', 'price': Decimal('80.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 53, 30)}, {'menu_item_id': 5, 'name': 'Chicken Biryani', 'price': Decimal('150.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 53, 30)}]
-2024-07-07 16:53:34,252 - root - ERROR - Error in view_notifications: 'dietary_category'
-2024-07-07 16:53:34,254 - root - DEBUG - Sending response: {"status": "error", "message": "Failed to retrieve notifications"}
-2024-07-07 16:55:58,880 - root - INFO - Server started on localhost:12346
-2024-07-07 16:56:07,289 - root - DEBUG - Received request: {"action": "login", "employee_id": "chef1", "password": "password123"}
-2024-07-07 16:56:07,297 - root - DEBUG - Sending response: {"status": "success", "role": "Chef", "user_id": 2}
-2024-07-07 16:56:15,451 - root - DEBUG - Received request: {"action": "choose_recommendations", "menu_item_ids": [1, 2, 4, 5], "user_id": 2, "role": 2}
-2024-07-07 16:56:15,452 - root - DEBUG - Fetched price for menu_item_id 1: 50.00
-2024-07-07 16:56:15,465 - root - DEBUG - Inserted rollout item: 1 by user: 2 with price: 50.00 at 2024-07-07 16:56:15.452534
-2024-07-07 16:56:15,465 - root - DEBUG - Fetched price for menu_item_id 2: 30.00
-2024-07-07 16:56:15,473 - root - DEBUG - Inserted rollout item: 2 by user: 2 with price: 30.00 at 2024-07-07 16:56:15.452534
-2024-07-07 16:56:15,473 - root - DEBUG - Fetched price for menu_item_id 4: 80.00
-2024-07-07 16:56:15,483 - root - DEBUG - Inserted rollout item: 4 by user: 2 with price: 80.00 at 2024-07-07 16:56:15.452534
-2024-07-07 16:56:15,488 - root - DEBUG - Fetched price for menu_item_id 5: 150.00
-2024-07-07 16:56:15,490 - root - DEBUG - Inserted rollout item: 5 by user: 2 with price: 150.00 at 2024-07-07 16:56:15.452534
-2024-07-07 16:56:15,498 - root - DEBUG - Inserting notification for employee 3
-2024-07-07 16:56:15,500 - root - DEBUG - Inserting notification for employee 4
-2024-07-07 16:56:15,504 - root - DEBUG - Sending response: {"status": "success", "message": "Recommendations chosen"}
-2024-07-07 16:56:24,355 - root - DEBUG - Received request: {"action": "login", "employee_id": "emp1", "password": "password123"}
-2024-07-07 16:56:24,356 - root - DEBUG - Sending response: {"status": "success", "role": "Employee", "user_id": 3}
-2024-07-07 16:56:25,953 - root - DEBUG - Received request: {"action": "view_notifications", "user_id": 3, "role": 3}
-2024-07-07 16:56:25,953 - root - DEBUG - Fetched notifications for user 3: [{'id': 25, 'user_id': 3, 'message': 'New rollout items available. Please vote for your preferred items.', 'viewed': 0, 'timestamp': datetime.datetime(2024, 7, 7, 16, 56, 15)}]
-2024-07-07 16:56:25,963 - root - DEBUG - Marked notifications as viewed for user 3
-2024-07-07 16:56:25,968 - root - DEBUG - Fetched rollout items: [{'menu_item_id': 1, 'name': 'Poha', 'dietary_category': 'Vegetarian', 'spice_level': 'Low', 'is_sweet': 0, 'price': Decimal('50.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 56, 15)}, {'menu_item_id': 2, 'name': 'Boiled Eggs', 'dietary_category': 'Eggetarian', 'spice_level': 'Low', 'is_sweet': 0, 'price': Decimal('30.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 56, 15)}, {'menu_item_id': 4, 'name': 'Aloo Paratha', 'dietary_category': 'Vegetarian', 'spice_level': 'High', 'is_sweet': 0, 'price': Decimal('80.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 56, 15)}, {'menu_item_id': 5, 'name': 'Chicken Biryani', 'dietary_category': 'Non Vegetarian', 'spice_level': 'High', 'is_sweet': 0, 'price': Decimal('150.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 56, 15)}]
-2024-07-07 16:56:25,973 - root - ERROR - Error in view_notifications: 'average_rating'
-2024-07-07 16:56:25,973 - root - DEBUG - Sending response: {"status": "error", "message": "Failed to retrieve notifications: 'average_rating'"}
-2024-07-07 16:58:32,697 - root - INFO - Server started on localhost:12346
-2024-07-07 16:58:38,163 - root - DEBUG - Received request: {"action": "login", "employee_id": "chef1", "password": "password123"}
-2024-07-07 16:58:38,166 - root - DEBUG - Sending response: {"status": "success", "role": "Chef", "user_id": 2}
-2024-07-07 16:58:46,946 - root - DEBUG - Received request: {"action": "login", "employee_id": "emp1", "password": "password123"}
-2024-07-07 16:58:46,946 - root - DEBUG - Sending response: {"status": "success", "role": "Employee", "user_id": 3}
-2024-07-07 16:59:04,711 - root - DEBUG - Received request: {"action": "login", "employee_id": "chef1", "password": "password123"}
-2024-07-07 16:59:04,724 - root - DEBUG - Sending response: {"status": "success", "role": "Chef", "user_id": 2}
-2024-07-07 16:59:09,971 - root - DEBUG - Received request: {"action": "choose_recommendations", "menu_item_ids": [1, 2, 4, 5], "user_id": 2, "role": 2}
-2024-07-07 16:59:09,971 - root - DEBUG - Fetched price for menu_item_id 1: 50.00
-2024-07-07 16:59:09,989 - root - DEBUG - Inserted rollout item: 1 by user: 2 with price: 50.00 at 2024-07-07 16:59:09.971787
-2024-07-07 16:59:09,991 - root - DEBUG - Fetched price for menu_item_id 2: 30.00
-2024-07-07 16:59:09,996 - root - DEBUG - Inserted rollout item: 2 by user: 2 with price: 30.00 at 2024-07-07 16:59:09.971787
-2024-07-07 16:59:09,996 - root - DEBUG - Fetched price for menu_item_id 4: 80.00
-2024-07-07 16:59:10,010 - root - DEBUG - Inserted rollout item: 4 by user: 2 with price: 80.00 at 2024-07-07 16:59:09.971787
-2024-07-07 16:59:10,013 - root - DEBUG - Fetched price for menu_item_id 5: 150.00
-2024-07-07 16:59:10,022 - root - DEBUG - Inserted rollout item: 5 by user: 2 with price: 150.00 at 2024-07-07 16:59:09.971787
-2024-07-07 16:59:10,022 - root - DEBUG - Inserting notification for employee 3
-2024-07-07 16:59:10,030 - root - DEBUG - Inserting notification for employee 4
-2024-07-07 16:59:10,037 - root - DEBUG - Sending response: {"status": "success", "message": "Recommendations chosen"}
-2024-07-07 16:59:18,357 - root - DEBUG - Received request: {"action": "login", "employee_id": "emp1", "password": "password123"}
-2024-07-07 16:59:18,357 - root - DEBUG - Sending response: {"status": "success", "role": "Employee", "user_id": 3}
-2024-07-07 16:59:20,401 - root - DEBUG - Received request: {"action": "view_notifications", "user_id": 3, "role": 3}
-2024-07-07 16:59:20,407 - root - DEBUG - Fetched notifications for user 3: [{'id': 27, 'user_id': 3, 'message': 'New rollout items available. Please vote for your preferred items.', 'viewed': 0, 'timestamp': datetime.datetime(2024, 7, 7, 16, 59, 10)}]
-2024-07-07 16:59:20,424 - root - DEBUG - Marked notifications as viewed for user 3
-2024-07-07 16:59:20,427 - root - DEBUG - Fetched rollout items: [{'menu_item_id': 1, 'name': 'Poha', 'dietary_category': 'Vegetarian', 'spice_level': 'Low', 'is_sweet': 0, 'average_rating': Decimal('4.5'), 'price': Decimal('50.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 59, 10)}, {'menu_item_id': 2, 'name': 'Boiled Eggs', 'dietary_category': 'Eggetarian', 'spice_level': 'Low', 'is_sweet': 0, 'average_rating': Decimal('4.0'), 'price': Decimal('30.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 59, 10)}, {'menu_item_id': 4, 'name': 'Aloo Paratha', 'dietary_category': 'Vegetarian', 'spice_level': 'High', 'is_sweet': 0, 'average_rating': Decimal('4.7'), 'price': Decimal('80.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 59, 10)}, {'menu_item_id': 5, 'name': 'Chicken Biryani', 'dietary_category': 'Non Vegetarian', 'spice_level': 'High', 'is_sweet': 0, 'average_rating': Decimal('4.8'), 'price': Decimal('150.00'), 'timestamp': datetime.datetime(2024, 7, 7, 16, 59, 10)}]
-2024-07-07 16:59:20,434 - root - DEBUG - Sending response: {"status": "success", "notifications": [{"id": 27, "user_id": 3, "message": "New rollout items available. Please vote for your preferred items.", "viewed": 0, "timestamp": "2024-07-07T16:59:10"}], "rollout_items": [{"menu_item_id": 4, "name": "Aloo Paratha", "dietary_category": "Vegetarian", "spice_level": "High", "is_sweet": 0, "average_rating": "4.7", "price": "80.00", "timestamp": "2024-07-07T16:59:10"}, {"menu_item_id": 1, "name": "Poha", "dietary_category": "Vegetarian", "spice_level": "Low", "is_sweet": 0, "average_rating": "4.5", "price": "50.00", "timestamp": "2024-07-07T16:59:10"}, {"menu_item_id": 2, "name": "Boiled Eggs", "dietary_category": "Eggetarian", "spice_level": "Low", "is_sweet": 0, "average_rating": "4.0", "price": "30.00", "timestamp": "2024-07-07T16:59:10"}, {"menu_item_id": 5, "name": "Chicken Biryani", "dietary_category": "Non Vegetarian", "spice_level": "High", "is_sweet": 0, "average_rating": "4.8", "price": "150.00", "timestamp": "2024-07-07T16:59:10"}]}
-2024-07-07 16:59:26,844 - root - DEBUG - Received request: {"action": "view_menu"}
-2024-07-07 16:59:26,844 - root - DEBUG - Sending response: {"status": "success", "menu": [{"id": 1, "name": "Poha", "price": "50.00", "average_rating": "4.5", "availability": "yes", "dietary_category": "Vegetarian", "spice_level": "Low", "is_sweet": 0}, {"id": 2, "name": "Boiled Eggs", "price": "30.00", "average_rating": "4.0", "availability": "yes", "dietary_category": "Eggetarian", "spice_level": "Low", "is_sweet": 0}, {"id": 3, "name": "Sandwich", "price": "60.00", "average_rating": "4.2", "availability": "yes", "dietary_category": "Vegetarian", "spice_level": "Medium", "is_sweet": 0}, {"id": 4, "name": "Aloo Paratha", "price": "80.00", "average_rating": "4.7", "availability": "yes", "dietary_category": "Vegetarian", "spice_level": "High", "is_sweet": 0}, {"id": 5, "name": "Chicken Biryani", "price": "150.00", "average_rating": "4.8", "availability": "yes", "dietary_category": "Non Vegetarian", "spice_level": "High", "is_sweet": 0}, {"id": 6, "name": "Gulab Jamun", "price": "40.00", "average_rating": "4.9", "availability": "yes", "dietary_category": "Vegetarian", "spice_level": "Low", "is_sweet": 1}]}
+2024-07-14 18:43:08,734 - root - INFO - Server started on localhost:12346
+2024-07-14 18:45:46,751 - root - DEBUG - Received request: {"action": "login", "employee_id": "chef1", "password": "password123"}
+2024-07-14 18:45:46,804 - root - DEBUG - Sending response: {"status": "success", "role": "Chef", "user_id": 2}
+2024-07-14 18:45:50,047 - root - DEBUG - Received request: {"action": "view_menu"}
+2024-07-14 18:45:50,070 - root - DEBUG - Sending response: {"status": "success", "menu": [{"id": 1, "name": "Poha", "price": "50.00", "average_rating": "4.5", "availability": "yes", "dietary_category": "Vegetarian", "spice_level": "Low", "is_sweet": 0}, {"id": 2, "name": "Boiled Eggs", "price": "30.00", "average_rating": "4.0", "availability": "yes", "dietary_category": "Eggetarian", "spice_level": "Low", "is_sweet": 0}, {"id": 3, "name": "Sandwich", "price": "60.00", "average_rating": "4.2", "availability": "yes", "dietary_category": "Vegetarian", "spice_level": "Medium", "is_sweet": 0}, {"id": 4, "name": "Aloo Paratha", "price": "80.00", "average_rating": "4.7", "availability": "yes", "dietary_category": "Vegetarian", "spice_level": "High", "is_sweet": 0}, {"id": 5, "name": "Chicken Biryani", "price": "150.00", "average_rating": "4.8", "availability": "yes", "dietary_category": "Non Vegetarian", "spice_level": "High", "is_sweet": 0}, {"id": 6, "name": "Gulab Jamun", "price": "40.00", "average_rating": "4.9", "availability": "yes", "dietary_category": "Vegetarian", "spice_level": "Low", "is_sweet": 1}]}
+2024-07-14 18:46:01,815 - root - DEBUG - Received request: {"action": "get_recommendations", "role": 2}
+2024-07-14 18:46:01,815 - root - ERROR - Error in get_recommendations: 'user_id'
+2024-07-14 18:46:01,815 - root - DEBUG - Sending response: {"status": "error", "message": "Failed to get recommendations"}
+2024-07-14 18:50:34,836 - root - INFO - Server started on localhost:12346
+2024-07-14 18:50:48,140 - root - DEBUG - Received request: {"action": "login", "employee_id": "chef1", "password": "password123"}
+2024-07-14 18:50:48,156 - root - DEBUG - Sending response: {"status": "success", "role": "Chef", "user_id": 2}
+2024-07-14 18:50:50,121 - root - DEBUG - Received request: {"action": "get_recommendations", "role": 2}
+2024-07-14 18:50:50,121 - root - ERROR - Error in get_recommendations: 'user_id'
+2024-07-14 18:50:50,121 - root - DEBUG - Sending response: {"status": "error", "message": "Failed to get recommendations"}
+2024-07-14 18:57:44,555 - root - INFO - Server started on localhost:12346
+2024-07-14 18:57:55,037 - root - DEBUG - Received request: {"action": "login", "employee_id": "chef1", "password": "password123"}
+2024-07-14 18:57:55,051 - root - DEBUG - Sending response: {"status": "success", "role": "Chef", "user_id": 2}
+2024-07-14 19:03:03,338 - root - INFO - Server started on localhost:12346
+2024-07-14 19:03:16,386 - root - DEBUG - Received request: {"action": "login", "employee_id": "chef1", "password": "password123"}
+2024-07-14 19:03:16,386 - root - DEBUG - Sending response: {"status": "success", "role": "Chef", "user_id": 2}
+2024-07-14 19:03:17,956 - root - DEBUG - Received request: {"action": "get_recommendations", "user_id": 2, "role": 2}
+2024-07-14 19:03:17,963 - root - DEBUG - Fetching preferences for user_id=2
+2024-07-14 19:03:17,971 - root - DEBUG - User preferences: None
+2024-07-14 19:03:17,976 - root - DEBUG - Fetched recommendations: [{'id': 6, 'name': 'Gulab Jamun', 'price': Decimal('40.00'), 'average_rating': Decimal('4.9'), 'dietary_category': 'Vegetarian', 'spice_level': 'Low', 'is_sweet': 1}, {'id': 5, 'name': 'Chicken Biryani', 'price': Decimal('150.00'), 'average_rating': Decimal('4.8'), 'dietary_category': 'Non Vegetarian', 'spice_level': 'High', 'is_sweet': 0}, {'id': 4, 'name': 'Aloo Paratha', 'price': Decimal('80.00'), 'average_rating': Decimal('4.7'), 'dietary_category': 'Vegetarian', 'spice_level': 'High', 'is_sweet': 0}, {'id': 1, 'name': 'Poha', 'price': Decimal('50.00'), 'average_rating': Decimal('4.5'), 'dietary_category': 'Vegetarian', 'spice_level': 'Low', 'is_sweet': 0}, {'id': 3, 'name': 'Sandwich', 'price': Decimal('60.00'), 'average_rating': Decimal('4.2'), 'dietary_category': 'Vegetarian', 'spice_level': 'Medium', 'is_sweet': 0}, {'id': 2, 'name': 'Boiled Eggs', 'price': Decimal('30.00'), 'average_rating': Decimal('4.0'), 'dietary_category': 'Eggetarian', 'spice_level': 'Low', 'is_sweet': 0}]
+2024-07-14 19:03:17,976 - root - DEBUG - Sending response: {"status": "success", "recommendations": [{"id": 6, "name": "Gulab Jamun", "price": "40.00", "average_rating": "4.9", "dietary_category": "Vegetarian", "spice_level": "Low", "is_sweet": 1}, {"id": 5, "name": "Chicken Biryani", "price": "150.00", "average_rating": "4.8", "dietary_category": "Non Vegetarian", "spice_level": "High", "is_sweet": 0}, {"id": 4, "name": "Aloo Paratha", "price": "80.00", "average_rating": "4.7", "dietary_category": "Vegetarian", "spice_level": "High", "is_sweet": 0}, {"id": 1, "name": "Poha", "price": "50.00", "average_rating": "4.5", "dietary_category": "Vegetarian", "spice_level": "Low", "is_sweet": 0}, {"id": 3, "name": "Sandwich", "price": "60.00", "average_rating": "4.2", "dietary_category": "Vegetarian", "spice_level": "Medium", "is_sweet": 0}, {"id": 2, "name": "Boiled Eggs", "price": "30.00", "average_rating": "4.0", "dietary_category": "Eggetarian", "spice_level": "Low", "is_sweet": 0}]}
+2024-07-14 19:03:41,553 - root - DEBUG - Received request: {"action": "choose_recommendations", "menu_item_ids": [4, 3, 5], "user_id": 2, "role": 2}
+2024-07-14 19:03:41,569 - root - DEBUG - Fetched price for menu_item_id 4: 80.00
+2024-07-14 19:03:41,609 - root - DEBUG - Inserted rollout item: 4 by user: 2 with price: 80.00 at 2024-07-14 19:03:41.553855
+2024-07-14 19:03:41,611 - root - DEBUG - Fetched price for menu_item_id 3: 60.00
+2024-07-14 19:03:41,615 - root - DEBUG - Inserted rollout item: 3 by user: 2 with price: 60.00 at 2024-07-14 19:03:41.553855
+2024-07-14 19:03:41,617 - root - DEBUG - Fetched price for menu_item_id 5: 150.00
+2024-07-14 19:03:41,621 - root - DEBUG - Inserted rollout item: 5 by user: 2 with price: 150.00 at 2024-07-14 19:03:41.553855
+2024-07-14 19:03:41,625 - root - DEBUG - Inserting notification for employee 3
+2024-07-14 19:03:41,628 - root - DEBUG - Inserting notification for employee 4
+2024-07-14 19:03:41,631 - root - DEBUG - Sending response: {"status": "success", "message": "Recommendations chosen"}
+2024-07-14 19:03:50,323 - root - DEBUG - Received request: {"action": "view_vote_counts"}
+2024-07-14 19:03:50,361 - root - DEBUG - Vote counts fetched: []
+2024-07-14 19:03:50,361 - root - DEBUG - Sending response: {"status": "success", "vote_counts": []}
+2024-07-14 19:03:59,789 - root - DEBUG - Received request: {"action": "view_discard_list"}
+2024-07-14 19:03:59,831 - root - DEBUG - Discard list: []
+2024-07-14 19:03:59,831 - root - DEBUG - Sending response: {"status": "success", "discard_list": []}
+2024-07-14 19:05:25,824 - root - DEBUG - Received request: {"action": "login", "employee_id": "emp1", "password": "password123"}
+2024-07-14 19:05:25,824 - root - DEBUG - Sending response: {"status": "success", "role": "Employee", "user_id": 3}
+2024-07-14 19:05:31,055 - root - DEBUG - Received request: {"action": "view_notifications", "user_id": 3, "role": 3}
+2024-07-14 19:05:31,055 - root - DEBUG - Fetched notifications for user 3: [{'id': 29, 'user_id': 3, 'message': 'New rollout items available. Please vote for your preferred items.', 'viewed': 0, 'timestamp': datetime.datetime(2024, 7, 14, 19, 3, 41)}]
+2024-07-14 19:05:31,073 - root - DEBUG - Marked notifications as viewed for user 3
+2024-07-14 19:05:31,075 - root - DEBUG - Fetched rollout items: [{'menu_item_id': 4, 'name': 'Aloo Paratha', 'dietary_category': 'Vegetarian', 'spice_level': 'High', 'is_sweet': 0, 'average_rating': Decimal('4.7'), 'price': Decimal('80.00'), 'timestamp': datetime.datetime(2024, 7, 14, 19, 3, 42)}, {'menu_item_id': 3, 'name': 'Sandwich', 'dietary_category': 'Vegetarian', 'spice_level': 'Medium', 'is_sweet': 0, 'average_rating': Decimal('4.2'), 'price': Decimal('60.00'), 'timestamp': datetime.datetime(2024, 7, 14, 19, 3, 42)}, {'menu_item_id': 5, 'name': 'Chicken Biryani', 'dietary_category': 'Non Vegetarian', 'spice_level': 'High', 'is_sweet': 0, 'average_rating': Decimal('4.8'), 'price': Decimal('150.00'), 'timestamp': datetime.datetime(2024, 7, 14, 19, 3, 42)}]
+2024-07-14 19:05:31,076 - root - DEBUG - Sending response: {"status": "success", "notifications": [{"id": 29, "user_id": 3, "message": "New rollout items available. Please vote for your preferred items.", "viewed": 0, "timestamp": "2024-07-14T19:03:41"}], "rollout_items": [{"menu_item_id": 3, "name": "Sandwich", "dietary_category": "Vegetarian", "spice_level": "Medium", "is_sweet": 0, "average_rating": "4.2", "price": "60.00", "timestamp": "2024-07-14T19:03:42"}, {"menu_item_id": 4, "name": "Aloo Paratha", "dietary_category": "Vegetarian", "spice_level": "High", "is_sweet": 0, "average_rating": "4.7", "price": "80.00", "timestamp": "2024-07-14T19:03:42"}, {"menu_item_id": 5, "name": "Chicken Biryani", "dietary_category": "Non Vegetarian", "spice_level": "High", "is_sweet": 0, "average_rating": "4.8", "price": "150.00", "timestamp": "2024-07-14T19:03:42"}]}
+2024-07-14 19:10:16,226 - root - DEBUG - Received request: {"action": "vote_for_menu_item", "dish_id": 3, "meal_type": "breakfast", "user_id": 3, "role": 3}
+2024-07-14 19:10:16,248 - root - DEBUG - Sending response: {"status": "success", "message": "Vote submitted"}
+2024-07-14 19:10:30,626 - root - DEBUG - Received request: {"action": "view_vote_counts"}
+2024-07-14 19:10:30,626 - root - DEBUG - Vote counts fetched: [{'name': 'Sandwich', 'meal_type': 'breakfast', 'vote_count': 1}]
+2024-07-14 19:10:30,626 - root - DEBUG - Sending response: {"status": "success", "vote_counts": [{"name": "Sandwich", "meal_type": "breakfast", "vote_count": 1}]}
+2024-07-15 08:17:01,748 - root - DEBUG - Received request: {"action": "send_feedback", "user_id": 2, "comment": "vert bad in taste", "item_id": 6, "role": 2}
+2024-07-15 08:17:01,748 - root - DEBUG - Analyzing feedback: user_id=2, comment='vert bad in taste', sentiment='negative', item_id=6
+2024-07-15 08:17:01,763 - root - DEBUG - Feedback counts for item_id 6: [{'sentiment': 'negative', 'count': 1}]
+2024-07-15 08:17:01,763 - root - DEBUG - Computed average rating for menu_item_id 6: 1.0
+2024-07-15 08:17:01,769 - root - DEBUG - Updated average rating for menu_item_id 6 to 1.0
+2024-07-15 08:17:01,772 - root - DEBUG - Inserted feedback for menu_item_id 6: vert bad in taste
+2024-07-15 08:17:01,772 - root - DEBUG - Sending response: {"status": "success", "message": "Feedback sended"}
+2024-07-15 08:17:32,605 - root - DEBUG - Received request: {"action": "submit_feedback", "user_id": 3, "comment": "very bad taste", "item_id": 6, "role": 3}
+2024-07-15 08:17:32,605 - root - DEBUG - Analyzing feedback: user_id=3, comment='very bad taste', sentiment='negative', item_id=6
+2024-07-15 08:17:32,605 - root - DEBUG - Feedback counts for item_id 6: [{'sentiment': 'negative', 'count': 2}]
+2024-07-15 08:17:32,605 - root - DEBUG - Computed average rating for menu_item_id 6: 1.0
+2024-07-15 08:17:32,620 - root - DEBUG - Updated average rating for menu_item_id 6 to 1.0
+2024-07-15 08:17:32,620 - root - DEBUG - Inserted feedback for menu_item_id 6: very bad taste
+2024-07-15 08:17:32,620 - root - DEBUG - Sending response: {"status": "success", "message": "Feedback submited"}
+2024-07-15 08:17:41,370 - root - DEBUG - Received request: {"action": "get_recommendations", "user_id": 2, "role": 2}
+2024-07-15 08:17:41,370 - root - DEBUG - Fetching preferences for user_id=2
+2024-07-15 08:17:41,386 - root - DEBUG - User preferences: None
+2024-07-15 08:17:41,387 - root - DEBUG - Fetched recommendations: [{'id': 5, 'name': 'Chicken Biryani', 'price': Decimal('150.00'), 'average_rating': Decimal('4.8'), 'dietary_category': 'Non Vegetarian', 'spice_level': 'High', 'is_sweet': 0}, {'id': 4, 'name': 'Aloo Paratha', 'price': Decimal('80.00'), 'average_rating': Decimal('4.7'), 'dietary_category': 'Vegetarian', 'spice_level': 'High', 'is_sweet': 0}, {'id': 1, 'name': 'Poha', 'price': Decimal('50.00'), 'average_rating': Decimal('4.5'), 'dietary_category': 'Vegetarian', 'spice_level': 'Low', 'is_sweet': 0}, {'id': 3, 'name': 'Sandwich', 'price': Decimal('60.00'), 'average_rating': Decimal('4.2'), 'dietary_category': 'Vegetarian', 'spice_level': 'Medium', 'is_sweet': 0}, {'id': 2, 'name': 'Boiled Eggs', 'price': Decimal('30.00'), 'average_rating': Decimal('4.0'), 'dietary_category': 'Eggetarian', 'spice_level': 'Low', 'is_sweet': 0}, {'id': 6, 'name': 'Gulab Jamun', 'price': Decimal('40.00'), 'average_rating': Decimal('1.0'), 'dietary_category': 'Vegetarian', 'spice_level': 'Low', 'is_sweet': 1}]
+2024-07-15 08:17:41,387 - root - DEBUG - Sending response: {"status": "success", "recommendations": [{"id": 5, "name": "Chicken Biryani", "price": "150.00", "average_rating": "4.8", "dietary_category": "Non Vegetarian", "spice_level": "High", "is_sweet": 0}, {"id": 4, "name": "Aloo Paratha", "price": "80.00", "average_rating": "4.7", "dietary_category": "Vegetarian", "spice_level": "High", "is_sweet": 0}, {"id": 1, "name": "Poha", "price": "50.00", "average_rating": "4.5", "dietary_category": "Vegetarian", "spice_level": "Low", "is_sweet": 0}, {"id": 3, "name": "Sandwich", "price": "60.00", "average_rating": "4.2", "dietary_category": "Vegetarian", "spice_level": "Medium", "is_sweet": 0}, {"id": 2, "name": "Boiled Eggs", "price": "30.00", "average_rating": "4.0", "dietary_category": "Eggetarian", "spice_level": "Low", "is_sweet": 0}, {"id": 6, "name": "Gulab Jamun", "price": "40.00", "average_rating": "1.0", "dietary_category": "Vegetarian", "spice_level": "Low", "is_sweet": 1}]}
+2024-07-15 08:17:50,654 - root - DEBUG - Received request: {"action": "view_discard_list"}
+2024-07-15 08:17:50,670 - root - DEBUG - Discard list: [{'id': 6, 'name': 'Gulab Jamun', 'average_rating': Decimal('1.0'), 'sentiments': 'bad, bad taste'}]
+2024-07-15 08:17:50,670 - root - DEBUG - Sending response: {"status": "success", "discard_list": [{"id": 6, "name": "Gulab Jamun", "average_rating": "1.0", "sentiments": "bad, bad taste"}]}

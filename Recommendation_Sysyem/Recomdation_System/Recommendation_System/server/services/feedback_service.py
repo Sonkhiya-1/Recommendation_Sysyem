@@ -1,9 +1,6 @@
-
-
-
 import logging
 from server.sentiment_analysis import SentimentAnalysis
-from decimal import Decimal
+from queries.feedback_queries import insert_feedback, get_feedback_counts, update_average_rating
 
 class FeedbackService:
     def __init__(self, db):
@@ -21,18 +18,13 @@ class FeedbackService:
             comment = request['comment']
             item_id = request['item_id']
             
-           
             sentiment_type, _ = SentimentAnalysis.analyze(comment)
             
             logging.debug(f"Analyzing feedback: user_id={user_id}, comment='{comment}', sentiment='{sentiment_type}', item_id={item_id}")
             
             cursor = self.db.cursor()
-            cursor.execute(
-                "INSERT INTO feedback (user_id, comment, sentiment, menu_item_id) VALUES (%s, %s, %s, %s)",
-                (user_id, comment, sentiment_type, item_id)
-            )
+            insert_feedback(cursor, user_id, comment, sentiment_type, item_id)
             self.db.commit()
-            
 
             self.update_average_rating(item_id)
             
@@ -47,17 +39,7 @@ class FeedbackService:
         try:
             cursor = self.db.cursor(dictionary=True)
         
-            cursor.execute(
-                """
-                SELECT sentiment, COUNT(*) as count 
-                FROM feedback 
-                WHERE menu_item_id = %s 
-                GROUP BY sentiment
-                """,
-                (item_id,)
-            )
-            
-            feedback_counts = cursor.fetchall()
+            feedback_counts = get_feedback_counts(cursor, item_id)
             logging.debug(f"Feedback counts for item_id {item_id}: {feedback_counts}")
             
             total_feedback = sum(f['count'] for f in feedback_counts)
@@ -80,21 +62,16 @@ class FeedbackService:
             avg_rating = total_rating / total_feedback
             logging.debug(f"Computed average rating for menu_item_id {item_id}: {avg_rating}")
 
-            
-            cursor.execute("UPDATE menu_items SET average_rating = %s WHERE id = %s", (avg_rating, item_id))
+            update_average_rating(cursor, item_id, avg_rating)
             self.db.commit()
             logging.debug(f"Updated average rating for menu_item_id {item_id} to {avg_rating}")
         except Exception as e:
             logging.error(f"Error in update_average_rating: {e}")
 
-
-
     def send_report(self, request, client_socket):
         try:
             report = request['report']
-        
             logging.debug(f"Report received: {report}")
-        
             return {'status': 'success', 'message': 'Report sent successfully'}
         except Exception as e:
             logging.error(f"Error in send_report: {e}")

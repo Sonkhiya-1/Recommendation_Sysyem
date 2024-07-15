@@ -1,5 +1,7 @@
 import logging
 import json
+from queries.notification_queries import get_notifications, mark_notifications_as_viewed, get_rollout_items, insert_notification, get_employee_ids
+from utils.custom_json_encoder import CustomJSONEncoder
 
 class NotificationService:
     def __init__(self, db, clients):
@@ -8,34 +10,22 @@ class NotificationService:
 
     def view_notifications(self, request, client_socket):
         user_id = request['user_id']
-        role = request.get('role')  
+        role = request.get('role')
         try:
             cursor = self.db.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM notifications WHERE user_id=%s AND viewed=FALSE", (user_id,))
-            notifications = cursor.fetchall()
+            notifications = get_notifications(cursor, user_id)
             logging.debug(f"Fetched notifications for user {user_id}: {notifications}")
 
             if notifications:
-                cursor.execute("UPDATE notifications SET viewed=TRUE WHERE user_id=%s AND viewed=FALSE", (user_id,))
+                mark_notifications_as_viewed(cursor, user_id)
                 self.db.commit()
                 logging.debug(f"Marked notifications as viewed for user {user_id}")
 
             rollout_items = []
             if role == 3 and notifications:
-                cursor.execute("""
-                    SELECT ri.menu_item_id, mi.name, mi.dietary_category, mi.spice_level, mi.is_sweet, mi.average_rating, ri.price, ri.timestamp
-                    FROM rollout_items ri
-                    JOIN menu_items mi ON ri.menu_item_id = mi.id
-                    WHERE ri.timestamp = (
-                        SELECT MAX(timestamp)
-                        FROM rollout_items
-                        WHERE chosen = TRUE
-                    )
-                """)
-                rollout_items = cursor.fetchall()
+                rollout_items = get_rollout_items(cursor)
                 logging.debug(f"Fetched rollout items: {rollout_items}")
 
-                # Fetch employee preferences
                 cursor.execute("SELECT * FROM user_preferences WHERE user_id = %s", (user_id,))
                 user_preferences = cursor.fetchone()
                 if user_preferences:
@@ -55,13 +45,12 @@ class NotificationService:
             'Non Vegetarian': 3
         }
 
-        # Sort based on multiple preferences
         sorted_items = sorted(rollout_items, key=lambda item: (
             dietary_order.get(item['dietary_category'], 4),
             self.spice_level_score(item['spice_level'], preferences['spice_level']),
-            not item['is_sweet'] if preferences['sweet_tooth'] else item['is_sweet'],  # Prefer sweet items if user has sweet tooth
-            -item['average_rating'],  # Higher ratings first
-            item['price']  # Assuming lower price is preferred
+            not item['is_sweet'] if preferences['sweet_tooth'] else item['is_sweet'],
+            -item['average_rating'],
+            item['price']
         ))
 
         return sorted_items
@@ -70,14 +59,12 @@ class NotificationService:
         spice_levels = {'Low': 1, 'Medium': 2, 'High': 3}
         return abs(spice_levels.get(item_spice, 2) - spice_levels.get(preferred_spice, 2))
 
-
-
     def send_notification(self, request, client_socket):
         user_id = request['user_id']
         message = request['message']
         try:
             cursor = self.db.cursor()
-            cursor.execute("INSERT INTO notifications (user_id, message, viewed) VALUES (%s, %s, %s)", (user_id, message, False))
+            insert_notification(cursor, user_id, message)
             self.db.commit()
             return {'status': 'success', 'message': 'Notification sent'}
         except Exception as e:
@@ -87,11 +74,10 @@ class NotificationService:
     def send_notification_to_all_employees(self, message):
         try:
             cursor = self.db.cursor(dictionary=True)
-            cursor.execute("SELECT id FROM users WHERE role = 3")
-            employees = cursor.fetchall()
+            employees = get_employee_ids(cursor)
             for employee in employees:
                 logging.debug(f"Inserting notification for employee {employee['id']}")
-                cursor.execute("INSERT INTO notifications (user_id, message, viewed) VALUES (%s, %s, %s)", (employee['id'], message, False))
+                insert_notification(cursor, employee['id'], message)
             self.db.commit()
             self._broadcast_notification(message)
         except Exception as e:
@@ -105,5 +91,3 @@ class NotificationService:
                     client_socket.sendall(notification.encode())
                 except Exception as e:
                     logging.error(f"Error sending notification to client: {e}")
-
-

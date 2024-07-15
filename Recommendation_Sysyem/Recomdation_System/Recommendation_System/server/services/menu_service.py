@@ -1,7 +1,6 @@
-# server/services/menu_service.py
-
 import logging
 import json
+from queries.menu_queries import get_menu, insert_menu_item, update_menu_item, delete_menu_item
 from utils.custom_json_encoder import CustomJSONEncoder
 
 class MenuService:
@@ -12,8 +11,7 @@ class MenuService:
     def view_menu(self, request, client_socket):
         try:
             cursor = self.db.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM menu_items")
-            menu = cursor.fetchall()
+            menu = get_menu(cursor)
             menu_json = json.dumps(menu, cls=CustomJSONEncoder)
             return {'status': 'success', 'menu': json.loads(menu_json)}
         except Exception as e:
@@ -26,7 +24,7 @@ class MenuService:
         try:
             name, price, availability = request['name'], request['price'], request['availability']
             cursor = self.db.cursor()
-            cursor.execute("INSERT INTO menu_items (name, price, availability) VALUES (%s, %s, %s)", (name, price, availability))
+            insert_menu_item(cursor, name, price, availability)
             self.db.commit()
             self.notification_service.send_notification_to_all_employees(f"New menu item added: {name}")
             return {'status': 'success', 'message': 'Menu item added'}
@@ -40,7 +38,7 @@ class MenuService:
         try:
             item_id, name, price, availability = request['item_id'], request['name'], request['price'], request['availability']
             cursor = self.db.cursor()
-            self._execute_update(cursor, item_id, name, price, availability)
+            update_menu_item(cursor, item_id, name, price, availability)
             self.db.commit()
             self.notification_service.send_notification_to_all_employees(f"Menu item updated: ID {item_id}")
             return {'status': 'success', 'message': 'Menu item updated'}
@@ -48,29 +46,12 @@ class MenuService:
             logging.error(f"Error in update_menu_item: {e}")
             return {'status': 'error', 'message': 'Failed to update menu item'}
 
-    def _execute_update(self, cursor, item_id, name, price, availability):
-        query = "UPDATE menu_items SET"
-        params = []
-        if name:
-            query += " name=%s,"
-            params.append(name)
-        if price:
-            query += " price=%s,"
-            params.append(price)
-        if availability:
-            query += " availability=%s,"
-            params.append(availability)
-        query = query.rstrip(',')
-        query += " WHERE id=%s"
-        params.append(item_id)
-        cursor.execute(query, tuple(params))
-
     def delete_menu_item(self, request, client_socket):
         if request.get('role') != 1:
             return {'status': 'error', 'message': 'Permission denied'}
         try:
             cursor = self.db.cursor()
-            cursor.execute("DELETE FROM menu_items WHERE id=%s", (request['item_id'],))
+            delete_menu_item(cursor, request['item_id'])
             self.db.commit()
             self.notification_service.send_notification_to_all_employees(f"Menu item deleted: ID {request['item_id']}")
             return {'status': 'success', 'message': 'Menu item deleted'}

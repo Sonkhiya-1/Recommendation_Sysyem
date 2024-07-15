@@ -1,7 +1,5 @@
 import json
 import logging
-import time
-import socket
 
 class NotificationListener:
     def __init__(self, socket):

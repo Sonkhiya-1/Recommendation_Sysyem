@@ -1,4 +1,4 @@
-from client.responses.base_response_handler import BaseResponseHandler
+from .base_response_handler import BaseResponseHandler
 
 class MenuHandler(BaseResponseHandler):
     @staticmethod
