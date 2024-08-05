@@ -7,5 +7,6 @@ class VoteCountsHandler(BaseResponseHandler):
             print("\nVote Counts for Today:")
             for vote in response['vote_counts']:
                 print(f"Item: {vote['name']} | Meal Type: {vote['meal_type']} | Votes: {vote['vote_count']}")
+            print("Voted for the item")
         else:
-            print("No vote counts to display for today.")
+            pass

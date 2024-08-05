@@ -25,7 +25,7 @@ class NotificationListener:
                         break
             
             except Exception as e:
-                logging.error(f"Error listening for notifications: {e}")
+                # logging.error(f"Error listening for notifications: {e}")
                 break
 
     def _extract_json(self, buffer):

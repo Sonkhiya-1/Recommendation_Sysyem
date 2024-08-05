@@ -1,5 +1,7 @@
+import datetime
 def insert_vote(cursor, menu_item_id, user_id, meal_type):
-    cursor.execute("INSERT INTO votes (menu_item_id, user_id, meal_type) VALUES (%s, %s, %s)", (menu_item_id, user_id, meal_type))
+    now = datetime.datetime.now()
+    cursor.execute("INSERT INTO votes (menu_item_id, user_id, meal_type, voted_at) VALUES (%s, %s, %s, %s)", (menu_item_id, user_id, meal_type, datetime.datetime.now()))
 
 def get_vote_counts(cursor, today):
     cursor.execute("""

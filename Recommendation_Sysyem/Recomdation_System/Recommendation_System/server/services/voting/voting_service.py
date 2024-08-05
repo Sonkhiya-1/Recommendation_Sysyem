@@ -21,7 +21,18 @@ class VotingService:
         try:
             cursor = self.db.cursor(dictionary=True)
             today = datetime.date.today()
-            vote_counts = get_vote_counts(cursor, today)
+            query = """
+                SELECT mi.name, v.meal_type, COUNT(v.id) as vote_count
+                FROM votes v
+                JOIN menu_items mi ON v.menu_item_id = mi.id
+                JOIN rollout_items ri ON ri.menu_item_id = mi.id
+                WHERE DATE(v.voted_at) = %s AND ri.chosen = TRUE
+                GROUP BY mi.name, v.meal_type
+            """
+            logging.debug(f"Executing query: {query} with date {today}")
+
+            cursor.execute(query, (today,))
+            vote_counts = cursor.fetchall()
             logging.debug(f"Vote counts fetched: {vote_counts}")
 
             return {'status': 'success', 'vote_counts': vote_counts}

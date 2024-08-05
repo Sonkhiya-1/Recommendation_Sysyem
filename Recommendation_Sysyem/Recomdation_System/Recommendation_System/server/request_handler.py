@@ -1,4 +1,3 @@
-# server/request_handler.py
 
 import logging
 
@@ -24,7 +23,6 @@ class RequestHandler:
             'view_notifications': self.services['notification_service'].view_notifications,
             'vote_for_menu_item': self.services['voting_service'].vote_for_menu_item,
             'submit_feedback': self.services['feedback_service'].submit_feedback,
-            'update_profile': self.services['user_management'].update_profile,  # Add update_profile handler
         }
         handler = action_handlers.get(request['action'], self.invalid_action)
         return handler(request, client_socket)

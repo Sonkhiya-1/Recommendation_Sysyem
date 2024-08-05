@@ -1,9 +1,14 @@
-# client/handlers/employee_handler.py
-
 def vote_for_menu_item(client):
-    dish_id = int(input("Enter Dish ID to Vote: "))
+    dish_ids = input("Enter Dish IDs to Vote for (comma separated): ").split(',')
+    dish_ids = [int(dish_id.strip()) for dish_id in dish_ids]
     meal_type = input("Enter Meal Type (breakfast/lunch/dinner): ")
-    return {"action": "vote_for_menu_item", "dish_id": dish_id, "meal_type": meal_type, "user_id": client.user_id, "role": client.role}
+    return {
+        "action": "vote_for_menu_item",
+        "dish_ids": dish_ids,
+        "meal_type": meal_type,
+        "user_id": client.user_id,
+        "role": client.role
+    }
 
 def give_review(client):
     dish_id = int(input("Enter Dish ID to Review: "))

@@ -1,9 +1,23 @@
-# client/handlers/chef_handler.py
-
+def get_recommendations(client):
+    min_items = int(input("Enter the number of recommendations per meal type: "))
+    return {
+        "action": "get_recommendations",
+        "user_id": client.user_id,
+        "role": client.role,
+        "min_items": min_items
+    }
+    
 def choose_recommendations(client):
     menu_item_ids = input("Enter Menu Item IDs to Recommend (comma separated): ").split(',')
     menu_item_ids = [int(id.strip()) for id in menu_item_ids]
-    return {"action": "choose_recommendations", "menu_item_ids": menu_item_ids, "user_id": client.user_id, "role": client.role}
+
+    return {
+        "action": "choose_recommendations",
+        "menu_item_ids": menu_item_ids,
+        "user_id": client.user_id,
+        "role": client.role,
+    }
+
 
 def send_feedback(client):
     comment = input("Enter Feedback Comment: ")
@@ -20,11 +34,21 @@ def remove_menu_item(client):
 
 def request_detailed_feedback(client):
     item_id = int(input("Enter Menu Item ID for Detailed Feedback Request: "))
-    return {"action": "request_detailed_feedback", "item_id": item_id}
+    return {
+        "action": "request_detailed_feedback",
+        "item_id": item_id,
+        "user_id": client.user_id,
+        "role": client.role
+    }
 
 chef_actions = {
     1: lambda client: {"action": "view_menu"},
-    2: lambda client: {"action": "get_recommendations", "user_id": client.user_id, "role": client.role},
+    2: lambda client: {
+        "action": "get_recommendations",
+        "user_id": client.user_id,
+        "role": client.role,
+        "min_items": int(input("Enter the number of recommendations per meal type: "))
+    },
     3: choose_recommendations,
     4: lambda client: {"action": "view_vote_counts"},
     5: send_feedback,

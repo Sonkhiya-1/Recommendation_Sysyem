@@ -1,52 +1,157 @@
-# client/handlers/admin_handler.py
-
 def add_menu_item(client):
-    name = input("Enter Menu Item Name: ")
-    price = float(input("Enter Menu Item Price: "))
-    availability = input("Enter Menu Item Availability (yes/no): ")
-    dietary_category = input("Enter Dietary Category (Vegetarian/Non Vegetarian/Eggetarian): ")
-    spice_level = input("Enter Spice Level (High/Medium/Low): ")
-    is_sweet = input("Is the dish sweet? (Yes/No): ").lower() == 'yes'
-    return {
-        "action": "add_menu_item",
-        "name": name,
-        "price": price,
-        "availability": availability,
-        "dietary_category": dietary_category,
-        "spice_level": spice_level,
-        "is_sweet": is_sweet,
-        "user_id": client.user_id,
-        "role": client.role
-    }
+    name = None
+    price = None
+    availability = None
+    dietary_category = None
+    spice_level = None
+    is_sweet = None
+    
+    while True:
+        try:
+            if not name:
+                name = input("Enter Menu Item Name: ").strip()
+                if not name:
+                    print("Error: Name is required")
+                    name = None
+                    continue
+
+            if not price:
+                price = input("Enter Menu Item Price: ").strip()
+                try:
+                    price = float(price)
+                except ValueError:
+                    print("Error: Price must be a number")
+                    price = None
+                    continue
+
+            if not availability:
+                availability = input("Enter Menu Item Availability (yes/no): ").strip().lower()
+                if availability not in ['yes', 'no']:
+                    print("Error: Invalid availability")
+                    availability = None
+                    continue
+
+            if not dietary_category:
+                dietary_category = input("Enter Dietary Category (Vegetarian/Non Vegetarian/Eggetarian): ").strip()
+                if dietary_category not in ['Vegetarian', 'Non Vegetarian', 'Eggetarian']:
+                    print("Error: Invalid dietary category")
+                    dietary_category = None
+                    continue
+
+            if not spice_level:
+                spice_level = input("Enter Spice Level (High/Medium/Low): ").strip()
+                if spice_level not in ['High', 'Medium', 'Low']:
+                    print("Error: Invalid spice level")
+                    spice_level = None
+                    continue
+
+            if is_sweet is None:
+                is_sweet = input("Is the dish sweet? (Yes/No): ").strip().lower()
+                if is_sweet not in ['yes', 'no']:
+                    print("Error: Invalid sweetness flag")
+                    is_sweet = None
+                    continue
+                is_sweet = is_sweet == 'yes'
+
+            return {
+                "action": "add_menu_item",
+                "name": name,
+                "price": price,
+                "availability": availability,
+                "dietary_category": dietary_category,
+                "spice_level": spice_level,
+                "is_sweet": is_sweet,
+                "role": client.role
+            }
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            continue
 
 def update_menu_item(client):
-    item_id = int(input("Enter Menu Item ID to Update: "))
-    name = input("Enter New Name (leave empty if no change): ")
-    price = input("Enter New Price (leave empty if no change): ")
-    availability = input("Enter New Availability (leave empty if no change): ")
-    dietary_category = input("Enter New Dietary Category (leave empty if no change): ")
-    spice_level = input("Enter New Spice Level (leave empty if no change): ")
-    is_sweet = input("Is the dish sweet? (Yes/No): ").lower() == 'yes'
-    return {
-        "action": "update_menu_item",
-        "item_id": item_id,
-        "name": name,
-        "price": price,
-        "availability": availability,
-        "dietary_category": dietary_category,
-        "spice_level": spice_level,
-        "is_sweet": is_sweet,
-        "user_id": client.user_id,
-        "role": client.role
-    }
+    item_id = None
+    name = None
+    price = None
+    availability = None
+    dietary_category = None
+    spice_level = None
+    is_sweet = None
+    
+    while True:
+        try:
+            if not item_id:
+                item_id = input("Enter Menu Item ID to Update: ").strip()
+                try:
+                    item_id = int(item_id)
+                except ValueError:
+                    print("Error: Item ID must be an integer")
+                    item_id = None
+                    continue
+
+            if name is None:
+                name = input("Enter New Name (leave empty if no change): ").strip()
+                name = name if name else None
+
+            if price is None:
+                price = input("Enter New Price (leave empty if no change): ").strip()
+                if price:
+                    try:
+                        price = float(price)
+                    except ValueError:
+                        print("Error: Price must be a number")
+                        price = None
+                        continue
+
+            if availability is None:
+                availability = input("Enter New Availability (leave empty if no change): ").strip().lower()
+                if availability and availability not in ['yes', 'no']:
+                    print("Error: Invalid availability")
+                    availability = None
+                    continue
+                availability = availability if availability else None
+
+            if dietary_category is None:
+                dietary_category = input("Enter New Dietary Category (leave empty if no change): ").strip()
+                if dietary_category and dietary_category not in ['Vegetarian', 'Non Vegetarian', 'Eggetarian']:
+                    print("Error: Invalid dietary category")
+                    dietary_category = None
+                    continue
+                dietary_category = dietary_category if dietary_category else None
+
+            if spice_level is None:
+                spice_level = input("Enter New Spice Level (leave empty if no change): ").strip()
+                if spice_level and spice_level not in ['High', 'Medium', 'Low']:
+                    print("Error: Invalid spice level")
+                    spice_level = None
+                    continue
+                spice_level = spice_level if spice_level else None
+
+            if is_sweet is None:
+                is_sweet = input("Is the dish sweet? (Yes/No): ").strip().lower()
+                if is_sweet and is_sweet not in ['yes', 'no']:
+                    print("Error: Invalid sweetness flag")
+                    is_sweet = None
+                    continue
+                is_sweet = is_sweet == 'yes' if is_sweet else None
+
+            return {
+                "action": "update_menu_item",
+                "item_id": item_id,
+                "name": name,
+                "price": price,
+                "availability": availability,
+                "dietary_category": dietary_category,
+                "spice_level": spice_level,
+                "is_sweet": is_sweet,
+                "role": client.role
+            }
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            continue
 
 def delete_menu_item(client):
     item_id = int(input("Enter Menu Item ID to Delete: "))
     return {"action": "delete_menu_item", "item_id": item_id, "user_id": client.user_id, "role": client.role}
 
-def remove_menu_item(client):
-    item_id = int(input("Enter Menu Item ID to Remove from Menu: "))
-    return {"action": "remove_menu_item", "item_id": item_id, "user_id": client.user_id, "role": client.role}
 
 def request_detailed_feedback(client):
     item_id = int(input("Enter Menu Item ID for Detailed Feedback Request: "))
@@ -61,6 +166,6 @@ admin_actions = {
     3: update_menu_item,
     4: delete_menu_item,
     5: view_discard_list,
-    6: remove_menu_item,
+    6: delete_menu_item,
     7: request_detailed_feedback,
 }
