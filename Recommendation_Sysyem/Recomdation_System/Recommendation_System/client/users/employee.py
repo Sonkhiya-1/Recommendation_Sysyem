@@ -10,6 +10,7 @@ def vote_for_menu_item(client):
         "role": client.role
     }
 
+
 def give_review(client):
     dish_id = int(input("Enter Dish ID to Review: "))
     rating = int(input("Enter Rating (1-5): "))
@@ -30,6 +31,34 @@ def update_profile(client):
     }
     return {"action": "update_profile", "user_id": client.user_id, "preferences": preferences}
 
+def respond_to_feedback_questions(client):
+    request = {"action": "get_feedback_questions", "user_id": client.user_id, "role": client.role}
+    response = client.send_request(request)
+    if response['status'] == 'success':
+        questions = response['feedback_questions']
+        for question in questions:
+            print(f"Question: {question['question']}")
+            answer = input("Your answer (or 'skip'): ")
+            if answer.lower() == 'skip':
+                answer = 'Skipped'
+            submit_feedback_response(client, question['id'], answer)
+    else:
+        print(f"Failed to retrieve feedback questions: {response['message']}")
+
+def submit_feedback_response(client, question_id, response):
+    request = {
+        "action": "submit_feedback_response",
+        "user_id": client.user_id,
+        "question_id": question_id,
+        "response": response,
+        "role": client.role
+    }
+    response = client.send_request(request)
+    if response['status'] == 'success':
+        print("Response submitted.")
+    else:
+        print(f"Failed to submit response: {response['message']}")
+
 employee_actions = {
     1: lambda client: {"action": "view_menu"},
     2: vote_for_menu_item,
@@ -37,4 +66,5 @@ employee_actions = {
     4: lambda client: {"action": "view_notifications", "user_id": client.user_id, "role": client.role},
     5: submit_feedback,
     6: update_profile,
+    7: respond_to_feedback_questions
 }

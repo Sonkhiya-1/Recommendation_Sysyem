@@ -1,3 +1,5 @@
+
+
 import socket
 import threading
 import logging
@@ -27,7 +29,7 @@ class Server:
         user_management = UserManagement(self.db, self.clients)
         menu_service = MenuService(self.db, notification_service)
         voting_service = VotingService(self.db)
-        feedback_service = FeedbackService(self.db)
+        feedback_service = FeedbackService(self.db, notification_service)  # Pass notification_service here
         recommendation_service = RecommendationService(self.db, self.clients)
         discard_item_service = DiscardItemService(self.db, notification_service)
 
@@ -46,7 +48,7 @@ class Server:
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server_socket.bind((self.host, self.port))
         server_socket.listen(5)
-        logging.info(f"Server started on {self.host}:{self.port}")
+        logging.info("Server started ")
 
         while True:
             client_socket, client_address = server_socket.accept()
@@ -76,5 +78,3 @@ class Server:
     def _send_error_response(self, client_socket, message):
         error_response = json.dumps({'status': 'error', 'message': message})
         client_socket.sendall(error_response.encode())
-
-

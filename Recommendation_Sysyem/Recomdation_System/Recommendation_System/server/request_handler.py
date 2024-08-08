@@ -19,10 +19,14 @@ class RequestHandler:
             'send_report': self.services['feedback_service'].send_report,
             'view_discard_list': self.services['discard_item_service'].view_discard_list,
             'remove_menu_item': self.services['discard_item_service'].remove_menu_item,
-            'request_detailed_feedback': self.services['discard_item_service'].request_detailed_feedback,
+            'request_detailed_feedback': self.services['feedback_service'].request_detailed_feedback,
+            'get_feedback_questions': self.services['feedback_service'].get_feedback_questions,
+            'submit_feedback_response': self.services['feedback_service'].submit_feedback_response,
+            'view_feedback_responses': self.services['feedback_service'].view_feedback_responses,
             'view_notifications': self.services['notification_service'].view_notifications,
             'vote_for_menu_item': self.services['voting_service'].vote_for_menu_item,
             'submit_feedback': self.services['feedback_service'].submit_feedback,
+            'logout': self.logout
         }
         handler = action_handlers.get(request['action'], self.invalid_action)
         return handler(request, client_socket)
@@ -30,3 +34,6 @@ class RequestHandler:
     def invalid_action(self, request, client_socket):
         logging.warning(f"Invalid action requested: {request['action']}")
         return {'status': 'error', 'message': 'Invalid action'}
+
+    def logout(self, request, client_socket):
+        return {'status': 'success', 'message': 'Logged out successfully'}

@@ -7,7 +7,6 @@ def get_recommendations(cursor):
         SELECT mi.id, mi.name, mi.price, mi.average_rating, mi.dietary_category, mi.spice_level, mi.is_sweet, mi.meal_type
         FROM menu_items mi
         ORDER BY mi.average_rating DESC
-        LIMIT 5
     """)
     return cursor.fetchall()
 

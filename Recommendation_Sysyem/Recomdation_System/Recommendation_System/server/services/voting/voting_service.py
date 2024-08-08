@@ -8,9 +8,14 @@ class VotingService:
 
     def vote_for_menu_item(self, request, client_socket):
         try:
-            user_id, menu_item_id, meal_type = request['user_id'], request['dish_id'], request['meal_type']
+            user_id = request['user_id']
+            dish_ids = request['dish_ids'] 
+            meal_type = request['meal_type']
             cursor = self.db.cursor()
-            insert_vote(cursor, menu_item_id, user_id, meal_type)
+
+            for dish_id in dish_ids:
+                insert_vote(cursor, dish_id, user_id, meal_type)
+
             self.db.commit()
             return {'status': 'success', 'message': 'Vote submitted'}
         except Exception as e:

@@ -154,11 +154,34 @@ def delete_menu_item(client):
 
 
 def request_detailed_feedback(client):
-    item_id = int(input("Enter Menu Item ID for Detailed Feedback Request: "))
-    return {"action": "request_detailed_feedback", "item_id": item_id, "user_id": client.user_id, "role": client.role}
+    item_id = input("Enter the Menu Item ID for which you want to request detailed feedback: ").strip()
+    if not item_id.isdigit():
+        print("Invalid item ID. Please enter a valid number.")
+        return
 
+    request = {
+        "action": "request_detailed_feedback",
+        "user_id": client.user_id,
+        "role": client.role,
+        "item_id": int(item_id)  # Convert item_id to an integer
+    }
+    response = client.send_request(request)
+    if response['status'] == 'success':
+        print(response['message'])
+    else:
+        print(f"Failed to request detailed feedback: {response['message']}")
 def view_discard_list(client):
     return {"action": "view_discard_list", "user_id": client.user_id, "role": client.role}
+
+def view_feedback_responses(client):
+    request = {"action": "view_feedback_responses", "user_id": client.user_id, "role": client.role}
+    response = client.send_request(request)
+    if response['status'] == 'success':
+        print("\nFeedback Responses:")
+        for feedback in response['feedback_responses']:
+            print(f"ID: {feedback['id']} | Employee: {feedback['employee_id']} | Question: {feedback['question']} | Response: {feedback['response']}")
+    else:
+        print(f"Failed to retrieve feedback responses: {response['message']}")
 
 admin_actions = {
     1: lambda client: {"action": "view_menu", "user_id": client.user_id, "role": client.role},
@@ -168,4 +191,5 @@ admin_actions = {
     5: view_discard_list,
     6: delete_menu_item,
     7: request_detailed_feedback,
+    8: view_feedback_responses,
 }

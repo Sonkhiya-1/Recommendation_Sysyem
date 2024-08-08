@@ -1,5 +1,3 @@
-# server/utils/db_connection.py
-
 import mysql.connector
 import logging
 

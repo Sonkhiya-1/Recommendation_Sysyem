@@ -1,10 +1,11 @@
 import logging
 from server.sentiment_analysis import SentimentAnalysis
-from server.services.feedback.feedback_queries import insert_feedback, get_feedback_counts, update_average_rating
+from server.services.feedback.feedback_queries import insert_feedback, get_feedback_counts, update_average_rating, insert_feedback_response, get_feedback_questions, get_feedback_responses
 
 class FeedbackService:
-    def __init__(self, db):
+    def __init__(self, db, notification_service):
         self.db = db
+        self.notification_service = notification_service
 
     def send_feedback(self, request, client_socket):
         return self._handle_feedback(request, action="send")
@@ -34,6 +35,7 @@ class FeedbackService:
         except Exception as e:
             logging.error(f"Error in {action}_feedback: {e}")
             return {'status': 'error', 'message': f'Failed to {action} feedback'}
+        
 
     def update_average_rating(self, item_id):
         try:
@@ -68,6 +70,7 @@ class FeedbackService:
         except Exception as e:
             logging.error(f"Error in update_average_rating: {e}")
 
+
     def send_report(self, request, client_socket):
         try:
             report = request['report']
@@ -76,3 +79,71 @@ class FeedbackService:
         except Exception as e:
             logging.error(f"Error in send_report: {e}")
             return {'status': 'error', 'message': 'Failed to send report'}
+        
+    
+
+    def request_detailed_feedback(self, request, client_socket):
+        if request.get('role') not in [1, 2]: 
+            return {'status': 'error', 'message': 'Permission denied'}
+        try:
+            item_id = request.get('item_id')
+            if item_id is None:
+                raise ValueError("Missing item_id in request")
+
+            cursor = self.db.cursor(dictionary=True)
+            feedback_questions = get_feedback_questions(cursor)
+
+            # Send notification to all employees
+            notification_message = f"Please provide detailed feedback for menu item ID {item_id}."
+            self.notification_service.send_notification_to_all_employees(notification_message)
+            self.db.commit()
+
+            logging.debug(f"Requested detailed feedback for item_id {item_id}")
+            return {'status': 'success', 'message': 'Feedback request sent to all employees'}
+        except Exception as e:
+            logging.error(f"Error in request_detailed_feedback: {e}")
+            return {'status': 'error', 'message': f'Failed to request detailed feedback: {str(e)}'}
+        
+        
+
+    def get_feedback_questions(self, request, client_socket):
+        if request.get('role') != 3:  # Only employees can respond to feedback
+            return {'status': 'error', 'message': 'Permission denied'}
+        try:
+            cursor = self.db.cursor(dictionary=True)
+            feedback_questions = get_feedback_questions(cursor)
+            logging.debug(f"Fetched feedback questions: {feedback_questions}")
+            return {'status': 'success', 'feedback_questions': feedback_questions}
+        except Exception as e:
+            logging.error(f"Error in get_feedback_questions: {e}")
+            return {'status': 'error', 'message': 'Failed to retrieve feedback questions'}
+        
+        
+
+    def submit_feedback_response(self, request, client_socket):
+        try:
+            user_id = request['user_id']
+            question_id = request['question_id']
+            response = request.get('response', 'Skipped')
+            cursor = self.db.cursor()
+            insert_feedback_response(cursor, user_id, question_id, response)
+            self.db.commit()
+            logging.debug(f"Inserted feedback response for question_id {question_id}: {response}")
+            return {'status': 'success', 'message': 'Feedback response submitted'}
+        except Exception as e:
+            logging.error(f"Error in submit_feedback_response: {e}")
+            return {'status': 'error', 'message': 'Failed to submit feedback response'}
+        
+        
+
+    def view_feedback_responses(self, request, client_socket):
+        if request.get('role') not in [1, 2]:
+            return {'status': 'error', 'message': 'Permission denied'}
+        try:
+            cursor = self.db.cursor(dictionary=True)
+            feedback_responses = get_feedback_responses(cursor)
+            logging.debug(f"Fetched feedback responses: {feedback_responses}")
+            return {'status': 'success', 'feedback_responses': feedback_responses}
+        except Exception as e:
+            logging.error(f"Error in view_feedback_responses: {e}")
+            return {'status': 'error', 'message': 'Failed to retrieve feedback responses'}

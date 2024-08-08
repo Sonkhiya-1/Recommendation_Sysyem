@@ -18,3 +18,23 @@ def get_feedback_counts(cursor, item_id):
 
 def update_average_rating(cursor, item_id, avg_rating):
     cursor.execute("UPDATE menu_items SET average_rating = %s WHERE id = %s", (avg_rating, item_id))
+
+def get_feedback_questions(cursor):
+    cursor.execute("SELECT * FROM feedback_questions")
+    return cursor.fetchall()
+
+def insert_feedback_response(cursor, user_id, question_id, response):
+    cursor.execute(
+        "INSERT INTO feedback_responses (user_id, question_id, response) VALUES (%s, %s, %s)",
+        (user_id, question_id, response)
+    )
+
+def get_feedback_responses(cursor):
+    cursor.execute("""
+        SELECT fr.id, u.employee_id, fq.question, fr.response
+        FROM feedback_responses fr
+        JOIN feedback_questions fq ON fr.question_id = fq.id
+        JOIN users u ON fr.user_id = u.id
+        ORDER BY fr.id
+    """)
+    return cursor.fetchall()

@@ -63,7 +63,6 @@ class Client:
                     break
                 request = self.request_data.get_request_data(action, self.role, self.user_id)
                 if not request:
-                    print("Invalid action selected. Please try again.")
                     continue
                 
                 response = self.send_request(request)
@@ -76,8 +75,8 @@ class Client:
     def _is_logout_action(self, action):
         return (
             (self.role == 1 and action == 8) or  # Admin logout action
-            (self.role == 2 and action == 10) or  # Chef logout action
-            (self.role == 3 and action == 7)  # Employee logout action
+            (self.role == 2 and action == 11) or  # Chef logout action
+            (self.role == 3 and action == 8)  # Employee logout action
         )
 
     def handle_response(self, response, action):
